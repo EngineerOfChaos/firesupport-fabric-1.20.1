@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "firesupport",
+	"version": "${version}",
+	"name": "Fire Support",
+	"description": "Finally a good turret mod :3",
+	"authors": [
+		"EngineerOfChaos (engi)"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/firesupport/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.engineerofchaos.firesupport.FireSupport"
+		],
+		"client": [
+			"net.engineerofchaos.firesupport.FireSupportClient"
+		],
+		"fabric-datagen": [
+			"net.engineerofchaos.firesupport.FireSupportDataGenerator"
+		]
+	},
+	"mixins": [
+		"firesupport.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
