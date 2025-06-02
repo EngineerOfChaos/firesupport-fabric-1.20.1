@@ -1,5 +1,6 @@
 package net.engineerofchaos.firesupport;
 
+import net.engineerofchaos.firesupport.block.ModBlocks;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.fabricmc.api.ModInitializer;
@@ -18,7 +19,10 @@ public class FireSupport implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Begin Fire Support Initialisation...");
+
 		ModItemGroups.registerItemGroups();
+
 		ModItems.registerModItems();
+		ModBlocks.registerModBlocks();
 	}
 }

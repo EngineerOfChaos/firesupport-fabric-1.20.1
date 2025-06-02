@@ -1,5 +1,7 @@
 {
   "item.firesupport.sandbag": "Sandbag",
 
+  "block.firesupport.damaged_glass": "Damaged Glass Block",
+
   "itemgroup.sandbag": "Fire Support: Stuff"
 }
