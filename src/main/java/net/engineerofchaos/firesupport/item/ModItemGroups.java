@@ -21,6 +21,17 @@ public class ModItemGroups {
 
                         entries.add(ModBlocks.DAMAGED_GLASS);
                         entries.add(ModBlocks.BARBED_WIRE);
+                        entries.add(ModBlocks.ARMOUR);
+
+                        entries.add(ModBlocks.ARMOUR_STAIRS);
+                        entries.add(ModBlocks.ARMOUR_SLAB);
+                        entries.add(ModBlocks.ARMOUR_FENCE);
+                        entries.add(ModBlocks.ARMOUR_FENCE_GATE);
+                        entries.add(ModBlocks.ARMOUR_WALL);
+                        entries.add(ModBlocks.ARMOUR_BUTTON);
+                        entries.add(ModBlocks.ARMOUR_PRESSURE_PLATE);
+                        entries.add(ModBlocks.ARMOUR_DOOR);
+                        entries.add(ModBlocks.ARMOUR_TRAPDOOR);
 
                     }).build());
 

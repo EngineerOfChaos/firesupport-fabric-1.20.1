@@ -4,6 +4,18 @@
 
   "block.firesupport.damaged_glass": "Damaged Glass Block",
   "block.firesupport.barbed_wire": "Barbed Wire",
+  "block.firesupport.armour": "Armour Block",
+
+  "block.firesupport.armour_stairs": "Armour Stairs",
+  "block.firesupport.armour_slab": "Armour Slab",
+  "block.firesupport.armour_button": "Armour Button",
+  "block.firesupport.armour_pressure_plate": "Armour Pressure Plate",
+  "block.firesupport.armour_fence": "Armour Fence",
+  "block.firesupport.armour_fence_gate": "Armour Fence Gate",
+  "block.firesupport.armour_wall": "Armour Wall",
+  "block.firesupport.armour_door": "Armour Door",
+  "block.firesupport.armour_trapdoor": "Armour Trapdoor",
+
 
   "itemgroup.sandbag": "Fire Support: Stuff"
 }

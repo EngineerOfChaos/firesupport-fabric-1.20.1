@@ -1,7 +1,16 @@
 {
   "variants": {
-    "": {
-      "model": "firesupport:block/barbed_wire"
+    "facing=east": {
+      "model": "firesupport:block/barbed_wire_ew"
+    },
+    "facing=west": {
+      "model": "firesupport:block/barbed_wire_ew"
+    },
+    "facing=north": {
+      "model": "firesupport:block/barbed_wire_ns"
+    },
+    "facing=south": {
+      "model": "firesupport:block/barbed_wire_ns"
     }
   }
 }
