@@ -17,8 +17,10 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.SANDBAG)).entries((displayContext, entries) -> {
 
                         entries.add(ModItems.SANDBAG);
+                        entries.add(ModItems.BRICK);
 
                         entries.add(ModBlocks.DAMAGED_GLASS);
+                        entries.add(ModBlocks.BARBED_WIRE);
 
                     }).build());
 
