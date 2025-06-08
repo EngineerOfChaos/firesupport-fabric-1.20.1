@@ -2,6 +2,7 @@ package net.engineerofchaos.firesupport.item;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.item.custom.BrickItem;
+import net.engineerofchaos.firesupport.item.custom.TestShellItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -15,6 +16,7 @@ public class ModItems {
     public static final Item SANDBAG = registerItem("sandbag", new Item(new FabricItemSettings()));
 
     public static final Item BRICK = registerItem("brick", new BrickItem(new FabricItemSettings()));
+    public static final Item TEST_SHELL = registerItem("test_shell", new TestShellItem(new FabricItemSettings()));
 
     private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
         entries.add(SANDBAG);

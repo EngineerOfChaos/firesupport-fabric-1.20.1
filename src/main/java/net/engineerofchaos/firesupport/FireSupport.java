@@ -3,8 +3,11 @@ package net.engineerofchaos.firesupport;
 import net.engineerofchaos.firesupport.block.ModBlocks;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
+import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
+import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +22,9 @@ public class FireSupport implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Begin Fire Support Initialisation...");
+
+		ModRegistries.registerModRegistries();
+		ShellComponents.registerShellComponents();
 
 		ModItemGroups.registerItemGroups();
 
