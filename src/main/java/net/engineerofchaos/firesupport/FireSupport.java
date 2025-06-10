@@ -1,6 +1,7 @@
 package net.engineerofchaos.firesupport;
 
 import net.engineerofchaos.firesupport.block.ModBlocks;
+import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
@@ -30,5 +31,7 @@ public class FireSupport implements ModInitializer {
 
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
+
+		ModEntities.registerModEntities();
 	}
 }
