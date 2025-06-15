@@ -19,6 +19,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -97,5 +98,35 @@ public class BulletEntity extends ThrownItemEntity {
 
         d *= 256.0;
         return distance < d * d;
+    }
+
+    public float getYaw() {
+        float x = (float) this.getVelocity().getX();
+        float z = (float) this.getVelocity().getZ();
+        if (z > 0) {
+            return (float) Math.toDegrees(Math.atan(x/z));
+        } else {
+            float angle = (float) Math.toDegrees(Math.atan(z/x));
+            if (x > 0) {
+                return 90 - angle;
+            } else if (x < 0) {
+                return -90 - angle;
+            } else {
+                return 180;
+            }
+        }
+    }
+
+    public float getPitch() {
+        float horizontal = new Vec2f((float) this.getVelocity().getX(), (float) this.getVelocity().getZ()).length();
+        return (float) - Math.toDegrees(Math.atan(this.getVelocity().getY() / horizontal));
+    }
+
+    public Vec3d getInterpolationOffset(float tickDelta) {
+        Vec3d velocity = this.getVelocity();
+        double x = velocity.getX() * (1 - tickDelta);
+        double y = velocity.getY() * (1 - tickDelta);
+        double z = velocity.getZ() * (1 - tickDelta);
+        return new Vec3d(0, 0, z);
     }
 }

@@ -17,6 +17,7 @@ public class ModItems {
 
     public static final Item BRICK = registerItem("brick", new BrickItem(new FabricItemSettings()));
     public static final Item TEST_SHELL = registerItem("test_shell", new TestShellItem(new FabricItemSettings()));
+    public static final Item CASING = registerItem("casing", new Item(new FabricItemSettings()));
 
     private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
         entries.add(SANDBAG);

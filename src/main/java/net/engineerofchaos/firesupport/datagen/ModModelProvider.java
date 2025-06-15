@@ -29,11 +29,14 @@ public class ModModelProvider extends FabricModelProvider {
 
         blockStateModelGenerator.registerDoor(ModBlocks.ARMOUR_DOOR);
         blockStateModelGenerator.registerTrapdoor(ModBlocks.ARMOUR_TRAPDOOR);
+
+        blockStateModelGenerator.registerSimpleState(ModBlocks.DIRECTIONAL_TURRET);
     }
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(ModItems.SANDBAG, Models.GENERATED);
         itemModelGenerator.register(ModItems.BRICK, Models.GENERATED);
+        itemModelGenerator.register(ModItems.CASING, Models.GENERATED);
     }
 }

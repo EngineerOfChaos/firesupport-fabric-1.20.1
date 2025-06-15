@@ -14,27 +14,35 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
 
 
 public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer<BulletEntity> {
-    private static final Identifier TEXTURE = new Identifier(FireSupport.MOD_ID, "textures/entity/bullet.png");
-    private final ModelBullet<T> model;
+    private static final Identifier TEXTURE = new Identifier(FireSupport.MOD_ID, "textures/entity/bullet_trail.png");
+    private final BulletModel<T> model;
 
     public BulletEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
-        this.model = new ModelBullet<>(ctx.getPart(ModModelLayers.BULLET));
+        this.model = new BulletModel<>(ctx.getPart(ModModelLayers.BULLET));
     }
 
     @Override
     public void render(BulletEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
+        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, 15728640);
         matrices.push();
-        matrices.translate(0, -1.4, 0);
+
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw()));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(entity.getPitch()));
+
+        matrices.translate(0, -1, 0);
+
+        //Vec3d offset = entity.getInterpolationOffset(tickDelta);
+        //matrices.translate(offset.x, offset.y, offset.z);
+
         this.model.setAngles(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.model.getLayer(this.getTexture(entity)));
-        this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        //VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.model.getLayer(this.getTexture(entity)));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE));
+        this.model.render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrices.pop();
 
     }
@@ -44,7 +52,12 @@ public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer
         return 15;
     }
 
+    protected int getSkyLight(BulletEntity entity, BlockPos pos) {
+        return 15;
+    }
+
     public Identifier getTexture(BulletEntity entity) {
         return TEXTURE;
     }
+
 }

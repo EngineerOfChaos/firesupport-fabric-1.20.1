@@ -2,6 +2,7 @@ package net.engineerofchaos.firesupport.block;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.block.custom.BarbedWireBlock;
+import net.engineerofchaos.firesupport.block.custom.BasicDirectionalTurretBlock;
 import net.engineerofchaos.firesupport.block.custom.DamagedGlassBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -43,6 +44,9 @@ public class ModBlocks {
             new DoorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK), BlockSetType.IRON));
     public static final Block ARMOUR_TRAPDOOR = registerBlock("armour_trapdoor",
             new TrapdoorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK), BlockSetType.IRON));
+
+    public static final Block DIRECTIONAL_TURRET = registerBlock("directional_turret",
+            new BasicDirectionalTurretBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

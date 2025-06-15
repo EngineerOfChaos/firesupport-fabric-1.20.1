@@ -27,6 +27,7 @@ public class ModItemGroups {
                                 Arrays.asList(ShellComponents.SOLID_AP, ShellComponents.HIGH_EXPLOSIVE)));
                         entries.add(ShellComponentUtil.addShellComponents(new ItemStack(ModItems.TEST_SHELL),
                                 Arrays.asList(ShellComponents.SOLID_SAP, ShellComponents.HIGH_EXPLOSIVE)));
+                        entries.add(ModItems.CASING);
 
                         entries.add(ModBlocks.DAMAGED_GLASS);
                         entries.add(ModBlocks.BARBED_WIRE);
@@ -41,6 +42,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.ARMOUR_PRESSURE_PLATE);
                         entries.add(ModBlocks.ARMOUR_DOOR);
                         entries.add(ModBlocks.ARMOUR_TRAPDOOR);
+
+                        entries.add(ModBlocks.DIRECTIONAL_TURRET);
 
                     }).build());
 

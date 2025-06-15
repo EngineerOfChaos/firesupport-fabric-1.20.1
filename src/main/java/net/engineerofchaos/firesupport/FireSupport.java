@@ -1,9 +1,11 @@
 package net.engineerofchaos.firesupport;
 
 import net.engineerofchaos.firesupport.block.ModBlocks;
+import net.engineerofchaos.firesupport.block.entity.ModBlockEntities;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
+import net.engineerofchaos.firesupport.screen.ModScreenHandlers;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
 import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.fabricmc.api.ModInitializer;
@@ -33,5 +35,9 @@ public class FireSupport implements ModInitializer {
 		ModBlocks.registerModBlocks();
 
 		ModEntities.registerModEntities();
+
+		ModBlockEntities.registerBlockEntities();
+
+		ModScreenHandlers.registerScreenHandlers();
 	}
 }

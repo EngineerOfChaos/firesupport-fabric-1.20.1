@@ -16,7 +16,8 @@ public class ModEntities {
             FabricEntityTypeBuilder.<BulletEntity>create(SpawnGroup.MISC, BulletEntity::new)
                     .dimensions(EntityDimensions.fixed(0.2f, 0.2f))
                     .forceTrackedVelocityUpdates(false)
-                    .trackRangeChunks(16).build());
+                    .trackRangeChunks(16)
+                    .build());
 
     public static void registerModEntities() {
         FireSupport.LOGGER.info("Registering entities for " + FireSupport.MOD_ID);

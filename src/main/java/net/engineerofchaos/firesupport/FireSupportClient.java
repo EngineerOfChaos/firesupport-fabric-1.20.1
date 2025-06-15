@@ -4,17 +4,21 @@ import net.engineerofchaos.firesupport.block.ModBlocks;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.entity.render.BulletEntityRenderer;
+import net.engineerofchaos.firesupport.entity.render.BulletModel;
 import net.engineerofchaos.firesupport.entity.render.ModModelLayers;
 import net.engineerofchaos.firesupport.entity.render.ModelBullet;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.item.custom.TestShellItem;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
+import net.engineerofchaos.firesupport.screen.BasicDirectionalTurretScreen;
+import net.engineerofchaos.firesupport.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import org.joml.Vector3f;
@@ -27,7 +31,7 @@ public class FireSupportClient implements ClientModInitializer {
 
         ColorProviderRegistry.ITEM.register(TestShellItem::getColour, ModItems.TEST_SHELL);
 
-        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, ModelBullet::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
         //EntityRendererRegistry.register(ModEntities.BULLET_THROWN, FlyingItemEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityRenderer::new);
 
@@ -48,7 +52,6 @@ public class FireSupportClient implements ClientModInitializer {
 
         }));
 
-
-
+        HandledScreens.register(ModScreenHandlers.BASIC_DIRECTIONAL_TURRET_SCREEN_HANDLER, BasicDirectionalTurretScreen::new);
     }
 }
