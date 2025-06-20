@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
@@ -30,6 +31,11 @@ public class BulletEntity extends ThrownItemEntity {
 
     public BulletEntity(LivingEntity livingEntity, World world) {
         super(ModEntities.BULLET_THROWN, livingEntity, world);
+    }
+
+    public BulletEntity(EntityType<BulletEntity> entityType, World world, ItemStack shell) {
+        super(entityType, world);
+
     }
 
     @Override

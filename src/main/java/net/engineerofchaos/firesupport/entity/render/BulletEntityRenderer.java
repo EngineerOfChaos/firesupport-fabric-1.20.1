@@ -18,7 +18,7 @@ import net.minecraft.util.math.*;
 
 
 public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer<BulletEntity> {
-    private static final Identifier TEXTURE = new Identifier(FireSupport.MOD_ID, "textures/entity/bullet_trail.png");
+    private static final Identifier TEXTURE = new Identifier(FireSupport.MOD_ID, "textures/entity/bullet_trail_outline.png");
     private final BulletModel<T> model;
 
     public BulletEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -28,7 +28,6 @@ public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer
 
     @Override
     public void render(BulletEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, 15728640);
         matrices.push();
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw()));
@@ -36,14 +35,12 @@ public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer
 
         matrices.translate(0, -1, 0);
 
-        //Vec3d offset = entity.getInterpolationOffset(tickDelta);
-        //matrices.translate(offset.x, offset.y, offset.z);
-
         this.model.setAngles(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
         //VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.model.getLayer(this.getTexture(entity)));
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(TEXTURE));
         this.model.render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrices.pop();
+        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, 15728640);
 
     }
 
@@ -52,9 +49,9 @@ public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer
         return 15;
     }
 
-    protected int getSkyLight(BulletEntity entity, BlockPos pos) {
-        return 15;
-    }
+//    protected int getSkyLight(BulletEntity entity, BlockPos pos) {
+//        return 15;
+//    }
 
     public Identifier getTexture(BulletEntity entity) {
         return TEXTURE;

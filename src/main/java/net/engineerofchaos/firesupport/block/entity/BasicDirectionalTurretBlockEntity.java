@@ -33,7 +33,7 @@ public class BasicDirectionalTurretBlockEntity extends BlockEntity implements Ex
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 16;
+    private int maxProgress = 2;
 
     public BasicDirectionalTurretBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DIRECTIONAL_TURRET_BLOCK_ENTITY, pos, state);
@@ -125,13 +125,14 @@ public class BasicDirectionalTurretBlockEntity extends BlockEntity implements Ex
     }
 
     private void fireShell(World world, BlockPos pos) {
+        ItemStack shell =  this.getStack(INPUT_SLOT);
         this.removeStack(INPUT_SLOT, 1);
         ItemStack result = new ItemStack(ModItems.CASING);
 
         this.setStack(OUTPUT_SLOT, new ItemStack(result.getItem(), getStack(OUTPUT_SLOT).getCount() + result.getCount()));
 
-        BulletEntity bulletEntity = new BulletEntity(ModEntities.BULLET_THROWN, world);
-        Vec3d velocity = bulletEntity.calcVelocity(0, 180, 0.0F, 10F, 1.0F);
+        BulletEntity bulletEntity = new BulletEntity(ModEntities.BULLET_THROWN, world, shell);
+        Vec3d velocity = bulletEntity.calcVelocity(0, 180, 0.0F, 40F, 1.0F);
         bulletEntity.setPosition(pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() - 0.1);
         bulletEntity.setVelocity(velocity);
 

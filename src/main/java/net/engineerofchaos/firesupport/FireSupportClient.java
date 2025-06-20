@@ -3,10 +3,7 @@ package net.engineerofchaos.firesupport;
 import net.engineerofchaos.firesupport.block.ModBlocks;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.ModEntities;
-import net.engineerofchaos.firesupport.entity.render.BulletEntityRenderer;
-import net.engineerofchaos.firesupport.entity.render.BulletModel;
-import net.engineerofchaos.firesupport.entity.render.ModModelLayers;
-import net.engineerofchaos.firesupport.entity.render.ModelBullet;
+import net.engineerofchaos.firesupport.entity.render.*;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.item.custom.TestShellItem;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
@@ -32,8 +29,7 @@ public class FireSupportClient implements ClientModInitializer {
         ColorProviderRegistry.ITEM.register(TestShellItem::getColour, ModItems.TEST_SHELL);
 
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
-        //EntityRendererRegistry.register(ModEntities.BULLET_THROWN, FlyingItemEntityRenderer::new);
-        EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityCustomRenderer::new);
 
         ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.BULLET_VELOCITY_PACKET_ID, ((client, handler, buf, responseSender) -> {
             Vector3f velocity = buf.readVector3f();
