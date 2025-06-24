@@ -1,11 +1,21 @@
 package net.engineerofchaos.firesupport.shellcomponent;
 
 import com.google.common.collect.Lists;
+import net.engineerofchaos.firesupport.FireSupport;
+import net.engineerofchaos.firesupport.block.ModBlocks;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
+
+import javax.swing.text.html.parser.Entity;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -21,21 +31,72 @@ public class ShellComponentUtil {
         return list;
     }
 
-    public static ItemStack addShellComponents(ItemStack stack, List<ShellComponent> components) {
-        if (components.isEmpty()) {
-            return stack;
-        } else {
-            NbtCompound nbtCompound = stack.getOrCreateNbt();
-            int[] componentIDsArray = new int[components.size()];
+    public static ItemStack newShellWithComponents(ItemStack stack, List<ShellComponent> components) {
+        return newShellWithComponents(stack, components, null);
+    }
 
+    public static ItemStack newShellWithComponents(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+        if (!components.isEmpty()) {
+            // get item nbt
+            NbtCompound nbtCompound = stack.getOrCreateNbt();
+            // make array of component ids
+            int[] componentIDsArray = new int[components.size()];
+            // add ids to array
             for (int i = 0; i < components.size(); i++) {
                 componentIDsArray[i] = ShellComponent.getRawID(components.get(i));
             }
-
+            // add array to item nbt
             nbtCompound.putIntArray("ShellComponents", componentIDsArray);
+
+            if (additionalData != null) {
+                for (ShellComponent dataComponent : components) {
+                    if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getRawID())) {
+
+                        float data = additionalData.get(dataComponent.getRawID());
+                        nbtCompound.putFloat(String.valueOf(dataComponent.getRawID()), data);
+                    }
+                }
+            }
+
             stack.setNbt(nbtCompound);
-            return stack;
         }
+        return stack;
+    }
+
+    public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components) {
+        if (!components.isEmpty()) {
+            boolean flag = false;
+            for (ShellComponent component : components) {
+                List<ShellComponent> exclusives = getExclusives(component);
+                List<ShellComponent> requiredDependencies = getDependencies(component);
+
+                if (exclusives != null) {
+                    for (ShellComponent forbiddenComponent : exclusives) {
+                        if (components.contains(forbiddenComponent)) {
+                            flag = true;
+                            FireSupport.LOGGER.info("Cannot build shell! module {} is incompatible with {}", component.getName().toString(), forbiddenComponent.getName().toString());
+                            break;
+                        }
+                    }
+                }
+
+                if (requiredDependencies != null) {
+                    for (ShellComponent dependency : requiredDependencies) {
+                        if (!components.contains(dependency)) {
+                            flag = true;
+                            FireSupport.LOGGER.info("Cannot build shell! module {} requires {}", component.getName().toString(), dependency.getName().toString());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!flag) {
+                return newShellWithComponents(stack, components);
+            }
+            FireSupport.LOGGER.info("Shell build failed!");
+        }
+        return stack;
     }
 
     public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list) {
@@ -47,10 +108,22 @@ public class ShellComponentUtil {
                 int nextComponentID = nbtList[i];
                 ShellComponent component = ShellComponent.byRawID(nextComponentID);
                 if (component != null) {
+                    // if the component should have extra data, retrieve it from the nbt
+                    if (component instanceof AdditionalDataShellComponent) {
+                        float data = retrieveData(nbt, nextComponentID);
+                        // if no stored value (aka 0.0f) then don't override data, leave as default
+                        if (data != 0.0f) {
+                            ((AdditionalDataShellComponent) component).setData(data);
+                        }
+                    }
                     list.add(component);
                 }
             }
         }
+    }
+
+    private static float retrieveData(@NotNull NbtCompound nbt, int nextComponentID) {
+        return nbt.getFloat(String.valueOf(nextComponentID));
     }
 
     public static Vector2i getColours(ItemStack stack) {
@@ -71,5 +144,49 @@ public class ShellComponentUtil {
             secondary = primary;
         }
         return new Vector2i(primary.x, secondary.x);
+    }
+
+    public static List<ShellComponent> getExclusives(ShellComponent component) {
+        return ShellComponents.EXCLUSIVITY_MAP.get(component);
+    }
+
+    // component needs this list of things in order to work
+    public static List<ShellComponent> getDependencies(ShellComponent component) {
+        return ShellComponents.DEPENDENCY_MAP.get(component);
+    }
+
+    public static List<Float> createMultipliers(float speed, float damage, float ap,
+                                           float inaccuracy, float payload, float knockback) {
+        return Arrays.asList(speed, damage, ap, inaccuracy, payload, knockback);
+    }
+
+    /**
+     * Gets the fuse components from a list of components
+     * @param components
+     * @return list of fuses
+     */
+    public static List<FuseShellComponent> getFuses(List<ShellComponent> components) {
+        List<FuseShellComponent> fuses = new ArrayList<>();
+        for (ShellComponent component : components) {
+            if  (component instanceof FuseShellComponent) {
+                fuses.add((FuseShellComponent) component);
+            }
+        }
+        return fuses;
+    }
+
+    /**
+     * Gets the payload components from a list of components
+     * @param components
+     * @return list of payloads
+     */
+    public static List<PayloadShellComponent> getPayloads(List<ShellComponent> components) {
+        List<PayloadShellComponent> payloads = new ArrayList<>();
+        for (ShellComponent component : components) {
+            if  (component instanceof PayloadShellComponent) {
+                payloads.add((PayloadShellComponent) component);
+            }
+        }
+        return payloads;
     }
 }

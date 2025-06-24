@@ -1,7 +1,10 @@
 package net.engineerofchaos.firesupport.item.custom;
 
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
+import net.engineerofchaos.firesupport.shellcomponent.FuseShellComponent;
+import net.engineerofchaos.firesupport.shellcomponent.ShellComponent;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
+import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,6 +16,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector2i;
+
+import java.util.HashMap;
 
 public class TestShellItem extends Item {
 
@@ -30,28 +35,6 @@ public class TestShellItem extends Item {
         return -1;
     }
 
-//    @Override
-//    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-//        ItemStack stack = user.getStackInHand(hand);
-//
-//        Vector2i colours = ShellComponentUtil.getColours(stack);
-//        user.sendMessage(Text.literal("Detected colours: primary = " + colours.x + ", secondary = " + colours.y));
-//
-//        List<ShellComponent> components = ShellComponentUtil.getComponents(stack);
-//        for (ShellComponent component : components) {
-//            user.sendMessage(Text.literal("Detected component: " + ShellComponent.getRawID(component)));
-//        }
-//
-//        NbtCompound nbt = stack.getNbt();
-//        if (nbt != null) {
-//            user.sendMessage(Text.literal("Detected components tag: " + nbt.contains("ShellComponents")));
-//        } else {
-//            user.sendMessage(Text.literal("No data!"));
-//        }
-//
-//        return super.use(world, user, hand);
-//    }
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
@@ -66,10 +49,16 @@ public class TestShellItem extends Item {
                 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F)
         );
         if (!world.isClient) {
-            BulletEntity bulletEntity = new BulletEntity(user, world);
+            BulletEntity bulletEntity = new BulletEntity(world, itemStack);
+            bulletEntity.setPosition(user.getX(), user.getEyeY(), user.getZ());
             Vec3d velocity = bulletEntity.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
             bulletEntity.setItem(itemStack);
             bulletEntity.setVelocity(velocity);
+            HashMap<Integer, Float> fuseMap = new HashMap<>();
+            // this is an optional step to override the default values
+            fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 20f);
+            bulletEntity.programFuses(fuseMap);
+            bulletEntity.initFuses();
 
             world.spawnEntity(bulletEntity);
             bulletEntity.sendBulletVelocity(velocity);

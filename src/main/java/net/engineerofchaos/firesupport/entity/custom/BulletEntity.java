@@ -1,14 +1,14 @@
 package net.engineerofchaos.firesupport.entity.custom;
 
+import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
+import net.engineerofchaos.firesupport.shellcomponent.*;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,23 +19,53 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BulletEntity extends ThrownItemEntity {
+
+    private final List<ShellComponent> components;
+    private final List<FuseShellComponent> fuses;
+    private final List<PayloadShellComponent> payloads;
+
     public BulletEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
+        components = new ArrayList<>();
+        fuses = new ArrayList<>();
+        payloads = new ArrayList<>();
     }
 
-    public BulletEntity(LivingEntity livingEntity, World world) {
-        super(ModEntities.BULLET_THROWN, livingEntity, world);
+    public BulletEntity(World world, ItemStack shell) {
+        super(ModEntities.BULLET_THROWN, world);
+        components = ShellComponentUtil.getComponents(shell);
+        fuses = ShellComponentUtil.getFuses(components);
+        payloads = ShellComponentUtil.getPayloads(components);
     }
 
-    public BulletEntity(EntityType<BulletEntity> entityType, World world, ItemStack shell) {
-        super(entityType, world);
+    public void initFuses() {
+        for (FuseShellComponent fuse : fuses) {
+            fuse.initFuse(this);
+        }
+    }
 
+    @Override
+    public void tick() {
+        Vec3d detonationLocation = tickFuses();
+        if (detonationLocation != null) {
+            boolean destroy = executePayloadEffects(detonationLocation);
+            if (destroy) {
+                this.discard();
+            }
+        }
+        super.tick();
     }
 
     @Override
@@ -50,11 +80,85 @@ public class BulletEntity extends ThrownItemEntity {
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockHit(blockHitResult);
+    }
+
+    @Override
+    protected void onCollision(HitResult hitResult) {
         if (!this.getWorld().isClient()) {
             this.getWorld().sendEntityStatus(this, (byte) 3);
+            HitResult.Type type = hitResult.getType();
+            if (type == HitResult.Type.BLOCK) {
+                executePayloadEffects(hitResult.getPos());
+                this.discard();
+            }
+            if (type == HitResult.Type.ENTITY) {
+                Vec3d pos = getClosestPosition(hitResult);
+                executePayloadEffects(pos);
+                this.discard();
+            }
         }
-        this.discard();
-        super.onBlockHit(blockHitResult);
+
+        super.onCollision(hitResult);
+    }
+
+    private Vec3d getClosestPosition(HitResult hitResult) {
+        Vec3d normal = this.getVelocity();
+        FireSupport.LOGGER.info("Current bullet velocity {}", normal);
+
+
+        // plane normal vector (bullet velocity)
+        double a = normal.getX();
+        double b = normal.getY();
+        double c = normal.getZ();
+
+        // point on the plane (the target entity)
+        double ex = hitResult.getPos().getX();
+        double ey = hitResult.getPos().getY();
+        double ez = hitResult.getPos().getZ();
+
+        // bullet pos
+        double bx = this.getX();
+        double by = this.getY();
+        double bz = this.getZ();
+
+        // solve for last parameter for plane equation
+        double planeOffset = -(ex*a + ey*b + ez*c);
+
+        // solve for the multiplier of how far along the bullet's velocity the closest point is (should be <1)
+        double numerator = -(planeOffset + (a*bx) + (b*by) + (c*bz));
+        double denominator = (a*a + b*b + c*c);
+        double mult = numerator/denominator;
+        //double mult = (-planeOffset - (a * bx) - (b * by) - (c * bz)) / (a*a + b*b + c*c);
+
+        return new Vec3d(bx + mult * a, by + mult * b, bz + mult * c);
+    }
+
+    /**
+     *
+     * @param pos position of detonation
+     * @return bool does any payload destroy the shell
+     */
+    private boolean executePayloadEffects(Vec3d pos) {
+        boolean destroyShell = false;
+        boolean flag;
+        for (PayloadShellComponent payload : payloads) {
+            flag = payload.executePayloadEffect(pos, this.getWorld(), 1);
+            if (flag) { destroyShell = true; }
+        }
+        return destroyShell;
+    }
+
+    @Nullable
+    private Vec3d tickFuses() {
+        Vec3d location = null;
+        for (FuseShellComponent fuse : fuses) {
+            Vec3d temp = fuse.checkFuseCondition(this.getVelocity(), this.getPos());
+            if (temp != null) {
+                location = temp;
+            }
+        }
+        return location;
     }
 
     public void sendBulletVelocity(Vec3d velocity) {
@@ -128,11 +232,13 @@ public class BulletEntity extends ThrownItemEntity {
         return (float) - Math.toDegrees(Math.atan(this.getVelocity().getY() / horizontal));
     }
 
-    public Vec3d getInterpolationOffset(float tickDelta) {
-        Vec3d velocity = this.getVelocity();
-        double x = velocity.getX() * (1 - tickDelta);
-        double y = velocity.getY() * (1 - tickDelta);
-        double z = velocity.getZ() * (1 - tickDelta);
-        return new Vec3d(0, 0, z);
+    public void programFuses(HashMap<Integer, Float> fuseMap) {
+        for (FuseShellComponent fuse : fuses) {
+            int fuseID = ShellComponent.getRawID((ShellComponent) fuse);
+            if (fuseMap.containsKey(fuseID)) {
+                float value = fuseMap.get(fuseID);
+                ((AdditionalDataShellComponent) fuse).setData(value);
+            }
+        }
     }
 }

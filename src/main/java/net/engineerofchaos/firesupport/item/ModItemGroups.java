@@ -22,11 +22,16 @@ public class ModItemGroups {
 
                         entries.add(ModItems.SANDBAG);
                         entries.add(ModItems.BRICK);
-                        entries.add(ModItems.TEST_SHELL);
-                        entries.add(ShellComponentUtil.addShellComponents(new ItemStack(ModItems.TEST_SHELL),
+                        //entries.add(ModItems.TEST_SHELL);
+                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
                                 Arrays.asList(ShellComponents.SOLID_AP, ShellComponents.HIGH_EXPLOSIVE)));
-                        entries.add(ShellComponentUtil.addShellComponents(new ItemStack(ModItems.TEST_SHELL),
+                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
                                 Arrays.asList(ShellComponents.SOLID_SAP, ShellComponents.HIGH_EXPLOSIVE)));
+                        //this one should fail!
+                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
+                                Arrays.asList(ShellComponents.AP_CORE, ShellComponents.HIGH_EXPLOSIVE)));
+                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
+                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE)));
                         entries.add(ModItems.CASING);
 
                         entries.add(ModBlocks.DAMAGED_GLASS);

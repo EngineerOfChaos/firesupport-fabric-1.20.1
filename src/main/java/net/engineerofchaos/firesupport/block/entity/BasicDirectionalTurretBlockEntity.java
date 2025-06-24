@@ -131,7 +131,7 @@ public class BasicDirectionalTurretBlockEntity extends BlockEntity implements Ex
 
         this.setStack(OUTPUT_SLOT, new ItemStack(result.getItem(), getStack(OUTPUT_SLOT).getCount() + result.getCount()));
 
-        BulletEntity bulletEntity = new BulletEntity(ModEntities.BULLET_THROWN, world, shell);
+        BulletEntity bulletEntity = new BulletEntity(world, shell);
         Vec3d velocity = bulletEntity.calcVelocity(0, 180, 0.0F, 40F, 1.0F);
         bulletEntity.setPosition(pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() - 0.1);
         bulletEntity.setVelocity(velocity);

@@ -19,5 +19,10 @@
   "block.firesupport.armour_trapdoor": "Armour Trapdoor",
 
 
-  "itemgroup.sandbag": "Fire Support: Stuff"
+  "itemgroup.sandbag": "Fire Support: Stuff",
+
+  "shellComponent.firesupport.high_explosive": "High Explosive",
+  "shellComponent.firesupport.solid_ap": "Solid",
+  "shellComponent.firesupport.solid_sap": "Semi Armour Piercing",
+  "shellComponent.firesupport.ap_core": "Armour Piercing Core"
 }
