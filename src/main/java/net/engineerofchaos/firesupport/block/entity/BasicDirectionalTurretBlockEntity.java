@@ -33,7 +33,7 @@ public class BasicDirectionalTurretBlockEntity extends BlockEntity implements Ex
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 2;
+    private int maxProgress = 10;
 
     public BasicDirectionalTurretBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DIRECTIONAL_TURRET_BLOCK_ENTITY, pos, state);

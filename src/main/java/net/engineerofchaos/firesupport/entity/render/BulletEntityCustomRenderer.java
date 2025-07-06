@@ -21,53 +21,41 @@ public class BulletEntityCustomRenderer<T extends BulletEntity> extends EntityRe
         super(ctx);
     }
 
-
-
     @Override
     public void render(T entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, 15728640);
 
         // change these to be defined by entity data later!
         float width = 0.3F;
-        float length = 90F;
+        //float length = 90F;
+        float length = (float) (entity.getVelocity().length() * 2.25);
 
-        matrices.push();
+        //float stopRenderAfter = entity.getStopRenderTime();
 
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw()));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(entity.getPitch()));
+        //if (stopRenderAfter <= 1) {
+        //    FireSupport.LOGGER.info("stop value recieved: value {}", stopRenderAfter);
+        //}
 
-        matrices.scale(0.1F, 0.1F, 0.1F);
+        //if (tickDelta < stopRenderAfter) {
 
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(LAYER);
+            matrices.push();
 
-        MatrixStack.Entry entry = matrices.peek();
-        Matrix4f posMatrix = entry.getPositionMatrix();
-        Matrix3f normMatrix = entry.getNormalMatrix();
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw()));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(entity.getPitch()));
 
-        // up cw
-        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 1, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 0, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, length, 255, 255, 255, 0, 0);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, width, length, 255, 255, 255, 1, 0);
-        // up ccw
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 1, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 0, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, width, length, 255, 255, 255, 0, 0);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, length, 255, 255, 255, 1, 0);
+            matrices.scale(0.1F, 0.1F, 0.1F);
 
-        // down cw
-        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 1, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 0, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, length, 255, 255, 255, 0, 0);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, length, 255, 255, 255, 1, 0);
-        // down ccw
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 1, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 0, 1);
-        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, length, 255, 255, 255, 0, 0);
-        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, length, 255, 255, 255, 1, 0);
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(LAYER);
+
+            MatrixStack.Entry entry = matrices.peek();
+            Matrix4f posMatrix = entry.getPositionMatrix();
+            Matrix3f normMatrix = entry.getNormalMatrix();
+
+            renderAhead(vertexConsumer, posMatrix, normMatrix, width, length);
 
 
-        matrices.pop();
+            matrices.pop();
+        //}
 
     }
 
@@ -94,6 +82,54 @@ public class BulletEntityCustomRenderer<T extends BulletEntity> extends EntityRe
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
+    }
+
+    private void renderBehind(VertexConsumer vertexConsumer, Matrix4f posMatrix, Matrix3f normMatrix, float width, float length) {
+        // up cw
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, -length, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, -length, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 1, 0);
+        // up ccw
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, -length, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, -length, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 1, 0);
+
+        // down cw
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, -length, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, -length, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 1, 0);
+        // down ccw
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, -length, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, -length, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 1, 0);
+    }
+
+    private void renderAhead(VertexConsumer vertexConsumer, Matrix4f posMatrix, Matrix3f normMatrix, float width, float length) {
+        // up cw
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, length, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, length, 255, 255, 255, 1, 0);
+        // up ccw
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, 0, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, 0, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, width, length, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, -width, length, 255, 255, 255, 1, 0);
+
+        // down cw
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, length, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, length, 255, 255, 255, 1, 0);
+        // down ccw
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, 0, 255, 255, 255, 1, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, 0, 255, 255, 255, 0, 1);
+        vertex(vertexConsumer, posMatrix, normMatrix, width, -width, length, 255, 255, 255, 0, 0);
+        vertex(vertexConsumer, posMatrix, normMatrix, -width, width, length, 255, 255, 255, 1, 0);
     }
 
 }

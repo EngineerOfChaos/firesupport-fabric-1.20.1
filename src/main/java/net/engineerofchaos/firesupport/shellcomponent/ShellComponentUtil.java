@@ -22,12 +22,16 @@ import java.util.List;
 public class ShellComponentUtil {
 
     public static List<ShellComponent> getComponents(ItemStack stack) {
-        return getComponents(stack.getNbt());
+        return getComponents(stack.getNbt(), new HashMap<>());
     }
 
-    public static List<ShellComponent> getComponents(@Nullable NbtCompound nbt) {
-        List<ShellComponent> list = Lists.<ShellComponent>newArrayList();
-        getComponents(nbt, list);
+    public static List<ShellComponent> getComponents(ItemStack stack, HashMap<Integer, Float> additionalData) {
+        return getComponents(stack.getNbt(), additionalData);
+    }
+
+    public static List<ShellComponent> getComponents(@Nullable NbtCompound nbt, HashMap<Integer, Float> additionalData) {
+        List<ShellComponent> list = Lists.newArrayList();
+        getComponents(nbt, list, additionalData);
         return list;
     }
 
@@ -48,6 +52,7 @@ public class ShellComponentUtil {
             // add array to item nbt
             nbtCompound.putIntArray("ShellComponents", componentIDsArray);
 
+            // processing for additional data components: if additional data is provided add to nbt
             if (additionalData != null) {
                 for (ShellComponent dataComponent : components) {
                     if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getRawID())) {
@@ -99,7 +104,7 @@ public class ShellComponentUtil {
         return stack;
     }
 
-    public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list) {
+    public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list, HashMap<Integer, Float> additionalData) {
         if (nbt != null && nbt.contains("ShellComponents", NbtElement.INT_ARRAY_TYPE)) {
             int[] nbtList = nbt.getIntArray("ShellComponents");
 
@@ -108,14 +113,18 @@ public class ShellComponentUtil {
                 int nextComponentID = nbtList[i];
                 ShellComponent component = ShellComponent.byRawID(nextComponentID);
                 if (component != null) {
+
                     // if the component should have extra data, retrieve it from the nbt
                     if (component instanceof AdditionalDataShellComponent) {
                         float data = retrieveData(nbt, nextComponentID);
                         // if no stored value (aka 0.0f) then don't override data, leave as default
                         if (data != 0.0f) {
-                            ((AdditionalDataShellComponent) component).setData(data);
+                            additionalData.put(nextComponentID, data);
+                        } else {
+                            additionalData.put(nextComponentID, ((AdditionalDataShellComponent) component).getDefaultData());
                         }
                     }
+
                     list.add(component);
                 }
             }

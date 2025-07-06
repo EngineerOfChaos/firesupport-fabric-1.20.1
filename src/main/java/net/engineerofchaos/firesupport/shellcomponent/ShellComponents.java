@@ -32,6 +32,11 @@ public class ShellComponents {
     public static final ShellComponent TIMED_FUSE = register("timed_fuse",
             new TimedFuseShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 0, 255));
 
+    public static final ShellComponent SABOT = register("sabot",
+            new ShellComponent(ShellComponentUtil
+                    .createMultipliers(2f, 0.2f, 10f, 1f, 0.1f, 0.2f),
+                    1776412, 1));
+
     private static ShellComponent register(String name, ShellComponent component) {
         return Registry.register(ModRegistries.SHELL_COMPONENT, new Identifier(FireSupport.MOD_ID, name), component);
     }
@@ -41,16 +46,17 @@ public class ShellComponents {
     }
 
     public static void registerExclusivities() {
-        EXCLUSIVITY_MAP.put(ShellComponents.HIGH_EXPLOSIVE, List.of(ShellComponents.AP_CORE));
-        EXCLUSIVITY_MAP.put(ShellComponents.SOLID_AP, List.of(ShellComponents.SOLID_SAP));
-        EXCLUSIVITY_MAP.put(ShellComponents.SOLID_SAP, List.of(ShellComponents.SOLID_AP));
-        EXCLUSIVITY_MAP.put(ShellComponents.AP_CORE, List.of(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE));
-        EXCLUSIVITY_MAP.put(ShellComponents.TIMED_FUSE, List.of(ShellComponents.AP_CORE));
+        EXCLUSIVITY_MAP.put(HIGH_EXPLOSIVE, List.of(AP_CORE));
+        EXCLUSIVITY_MAP.put(SOLID_AP, List.of(SOLID_SAP));
+        EXCLUSIVITY_MAP.put(SOLID_SAP, List.of(SOLID_AP));
+        EXCLUSIVITY_MAP.put(AP_CORE, List.of(HIGH_EXPLOSIVE, TIMED_FUSE));
+        EXCLUSIVITY_MAP.put(TIMED_FUSE, List.of(AP_CORE));
+        EXCLUSIVITY_MAP.put(SABOT, List.of(HIGH_EXPLOSIVE, SOLID_AP, SOLID_SAP, AP_CORE, TIMED_FUSE));
     }
 
     // component needs this list of things in order to work
     public static void registerDependencies() {
-        DEPENDENCY_MAP.put(ShellComponents.AP_CORE, List.of(ShellComponents.SOLID_AP));
+        DEPENDENCY_MAP.put(AP_CORE, List.of(SOLID_AP));
     }
 
 }

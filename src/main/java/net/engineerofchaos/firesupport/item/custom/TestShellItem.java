@@ -50,11 +50,15 @@ public class TestShellItem extends Item {
         );
         if (!world.isClient) {
             BulletEntity bulletEntity = new BulletEntity(world, itemStack);
-            bulletEntity.setPosition(user.getX(), user.getEyeY(), user.getZ());
-            Vec3d velocity = bulletEntity.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
-            bulletEntity.setItem(itemStack);
+            Vec3d pos = new Vec3d(user.getX(), user.getEyeY(), user.getZ());
+            Vec3d velocity = bulletEntity.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 16F, 1.0F);
+
+            // summon the bullet one tick ahead
+            //bulletEntity.setPosition(pos.add(velocity.multiply(0.1)));
+            bulletEntity.setPosition(pos);
             bulletEntity.setVelocity(velocity);
             HashMap<Integer, Float> fuseMap = new HashMap<>();
+
             // this is an optional step to override the default values
             fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 20f);
             bulletEntity.programFuses(fuseMap);
