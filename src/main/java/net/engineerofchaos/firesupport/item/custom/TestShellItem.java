@@ -1,7 +1,6 @@
 package net.engineerofchaos.firesupport.item.custom;
 
-import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
-import net.engineerofchaos.firesupport.shellcomponent.FuseShellComponent;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponent;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
@@ -49,23 +48,23 @@ public class TestShellItem extends Item {
                 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F)
         );
         if (!world.isClient) {
-            BulletEntity bulletEntity = new BulletEntity(world, itemStack);
+            BulletEntityOld bulletEntityOld = new BulletEntityOld(world, itemStack);
             Vec3d pos = new Vec3d(user.getX(), user.getEyeY(), user.getZ());
-            Vec3d velocity = bulletEntity.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 16F, 1.0F);
+            Vec3d velocity = bulletEntityOld.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
 
             // summon the bullet one tick ahead
             //bulletEntity.setPosition(pos.add(velocity.multiply(0.1)));
-            bulletEntity.setPosition(pos);
-            bulletEntity.setVelocity(velocity);
+            bulletEntityOld.setPosition(pos);
+            bulletEntityOld.setVelocity(velocity);
             HashMap<Integer, Float> fuseMap = new HashMap<>();
 
             // this is an optional step to override the default values
-            fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 20f);
-            bulletEntity.programFuses(fuseMap);
-            bulletEntity.initFuses();
+            fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 5f);
+            bulletEntityOld.programFuses(fuseMap);
+            bulletEntityOld.initFuses();
 
-            world.spawnEntity(bulletEntity);
-            bulletEntity.sendBulletVelocity(velocity);
+            world.spawnEntity(bulletEntityOld);
+            bulletEntityOld.sendBulletVelocity(velocity);
         }
 
         user.incrementStat(Stats.USED.getOrCreateStat(this));

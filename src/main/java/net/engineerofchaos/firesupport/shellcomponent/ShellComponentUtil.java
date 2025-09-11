@@ -2,9 +2,6 @@ package net.engineerofchaos.firesupport.shellcomponent;
 
 import com.google.common.collect.Lists;
 import net.engineerofchaos.firesupport.FireSupport;
-import net.engineerofchaos.firesupport.block.ModBlocks;
-import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -12,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

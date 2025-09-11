@@ -1,7 +1,7 @@
 package net.engineerofchaos.firesupport;
 
 import net.engineerofchaos.firesupport.block.ModBlocks;
-import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.entity.render.*;
 import net.engineerofchaos.firesupport.item.ModItems;
@@ -17,7 +17,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import org.joml.Vector3f;
 
 public class FireSupportClient implements ClientModInitializer {
@@ -28,7 +27,7 @@ public class FireSupportClient implements ClientModInitializer {
 
         ColorProviderRegistry.ITEM.register(TestShellItem::getColour, ModItems.TEST_SHELL);
 
-        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
+        //EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
         EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityCustomRenderer::new);
 
         ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.BULLET_VELOCITY_PACKET_ID, ((client, handler, buf, responseSender) -> {
@@ -37,7 +36,7 @@ public class FireSupportClient implements ClientModInitializer {
 
             client.execute( () -> {
                 if (client.world != null) {
-                    BulletEntity targetBullet = (BulletEntity) client.world.getEntityById(entityID);
+                    BulletEntityOld targetBullet = (BulletEntityOld) client.world.getEntityById(entityID);
                     if (targetBullet != null){
                         targetBullet.setVelocityClient(velocity.x, velocity.y, velocity.z);
                         targetBullet.setVelocity(velocity.x, velocity.y, velocity.z);

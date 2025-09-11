@@ -1,7 +1,7 @@
 package net.engineerofchaos.firesupport.entity.render;
 
 import net.engineerofchaos.firesupport.FireSupport;
-import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -13,7 +13,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 
-public class BulletEntityCustomRenderer<T extends BulletEntity> extends EntityRenderer<T> {
+public class BulletEntityCustomRenderer<T extends BulletEntityOld> extends EntityRenderer<T> {
     private static final Identifier TEXTURE = new Identifier(FireSupport.MOD_ID, "textures/entity/bullet_trail_small.png");
     private static final RenderLayer LAYER = RenderLayer.getBeaconBeam(TEXTURE, false);
 
@@ -36,7 +36,7 @@ public class BulletEntityCustomRenderer<T extends BulletEntity> extends EntityRe
         //    FireSupport.LOGGER.info("stop value recieved: value {}", stopRenderAfter);
         //}
 
-        //if (tickDelta < stopRenderAfter) {
+        if (entity.age > 1) {
 
             matrices.push();
 
@@ -55,20 +55,20 @@ public class BulletEntityCustomRenderer<T extends BulletEntity> extends EntityRe
 
 
             matrices.pop();
-        //}
+        }
 
     }
 
     @Override
-    protected int getBlockLight(BulletEntity entity, BlockPos pos) {
+    protected int getBlockLight(BulletEntityOld entity, BlockPos pos) {
         return 15;
     }
 
-    protected int getSkyLight(BulletEntity entity, BlockPos pos) {
+    protected int getSkyLight(BulletEntityOld entity, BlockPos pos) {
         return 15;
     }
 
-    public Identifier getTexture(BulletEntity entity) {
+    public Identifier getTexture(BulletEntityOld entity) {
         return TEXTURE;
     }
 

@@ -37,6 +37,9 @@ public class ShellComponents {
                     .createMultipliers(2f, 0.2f, 10f, 1f, 0.1f, 0.2f),
                     1776412, 1));
 
+    public static final ShellComponent PROXY_FUSE = register("proxy_fuse",
+            new ProxyFuseShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 0, 255));
+
     private static ShellComponent register(String name, ShellComponent component) {
         return Registry.register(ModRegistries.SHELL_COMPONENT, new Identifier(FireSupport.MOD_ID, name), component);
     }
@@ -49,9 +52,10 @@ public class ShellComponents {
         EXCLUSIVITY_MAP.put(HIGH_EXPLOSIVE, List.of(AP_CORE));
         EXCLUSIVITY_MAP.put(SOLID_AP, List.of(SOLID_SAP));
         EXCLUSIVITY_MAP.put(SOLID_SAP, List.of(SOLID_AP));
-        EXCLUSIVITY_MAP.put(AP_CORE, List.of(HIGH_EXPLOSIVE, TIMED_FUSE));
+        EXCLUSIVITY_MAP.put(AP_CORE, List.of(HIGH_EXPLOSIVE, TIMED_FUSE, PROXY_FUSE));
         EXCLUSIVITY_MAP.put(TIMED_FUSE, List.of(AP_CORE));
-        EXCLUSIVITY_MAP.put(SABOT, List.of(HIGH_EXPLOSIVE, SOLID_AP, SOLID_SAP, AP_CORE, TIMED_FUSE));
+        EXCLUSIVITY_MAP.put(SABOT, List.of(HIGH_EXPLOSIVE, SOLID_AP, SOLID_SAP, AP_CORE, TIMED_FUSE, PROXY_FUSE));
+        EXCLUSIVITY_MAP.put(PROXY_FUSE, List.of(AP_CORE));
     }
 
     // component needs this list of things in order to work
