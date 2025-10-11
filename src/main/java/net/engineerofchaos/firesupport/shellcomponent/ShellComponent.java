@@ -1,22 +1,29 @@
 package net.engineerofchaos.firesupport.shellcomponent;
 
 import net.engineerofchaos.firesupport.util.ModRegistries;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShellComponent {
     private String translationKey;
-    private final int colour;
+    private final int colour1;
+    private final int colour2;
     private final int colourPriority;
     private final List<Float> multipliers;
 
     public ShellComponent(List<Float> multipliers, int colour, int colourPriority) {
-        this.colour = colour;
+        this.colour1 = colour;
+        this.multipliers = multipliers;
+        this.colourPriority = colourPriority;
+        this.colour2 = -1;
+    }
+
+    public ShellComponent(List<Float> multipliers, int colour1, int colour2, int colourPriority) {
+        this.colour1 = colour1;
+        this.colour2 = colour2;
         this.multipliers = multipliers;
         this.colourPriority = colourPriority;
     }
@@ -53,8 +60,18 @@ public class ShellComponent {
         return Text.translatable(this.getTranslationKey());
     }
 
-    public Vector2i getColourWithPriority() {
-        return new Vector2i(this.colour, this.colourPriority);
+    /**
+    If single colour component, returns colour and priority, if dual returns both colours
+     */
+    public Vector2i getColours() {
+        if (this.isDualColour()) {
+            return new Vector2i(this.colour1, this.colour2);
+        }
+        return new Vector2i(this.colour1, this.colourPriority);
+    }
+
+    public boolean isDualColour() {
+         return this.colour2 != -1;
     }
 
 

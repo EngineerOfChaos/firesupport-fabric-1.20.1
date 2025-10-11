@@ -34,6 +34,8 @@ public class ModItemGroups {
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE)));
                         entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.PROXY_FUSE)));
+                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
+                                Arrays.asList(ShellComponents.SABOT)));
 
 
                         entries.add(ModItems.CASING);

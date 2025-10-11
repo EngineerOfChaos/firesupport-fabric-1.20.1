@@ -5,6 +5,8 @@ import net.engineerofchaos.firesupport.FireSupport;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
@@ -39,29 +41,34 @@ public class ShellComponentUtil {
         if (!components.isEmpty()) {
             // get item nbt
             NbtCompound nbtCompound = stack.getOrCreateNbt();
-            // make array of component ids
-            int[] componentIDsArray = new int[components.size()];
-            // add ids to array
-            for (int i = 0; i < components.size(); i++) {
-                componentIDsArray[i] = ShellComponent.getRawID(components.get(i));
-            }
-            // add array to item nbt
-            nbtCompound.putIntArray("ShellComponents", componentIDsArray);
 
-            // processing for additional data components: if additional data is provided add to nbt
-            if (additionalData != null) {
-                for (ShellComponent dataComponent : components) {
-                    if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getRawID())) {
-
-                        float data = additionalData.get(dataComponent.getRawID());
-                        nbtCompound.putFloat(String.valueOf(dataComponent.getRawID()), data);
-                    }
-                }
-            }
+            addComponentsToNBTCompound(nbtCompound, components, additionalData);
 
             stack.setNbt(nbtCompound);
         }
         return stack;
+    }
+
+    public static void addComponentsToNBTCompound(NbtCompound nbtCompound, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+        // make array of component ids
+        int[] componentIDsArray = new int[components.size()];
+        // add ids to array
+        for (int i = 0; i < components.size(); i++) {
+            componentIDsArray[i] = ShellComponent.getRawID(components.get(i));
+        }
+        // add array to item nbt
+        nbtCompound.putIntArray("ShellComponents", componentIDsArray);
+
+        // processing for additional data components: if additional data is provided add to nbt
+        if (additionalData != null) {
+            for (ShellComponent dataComponent : components) {
+                if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getRawID())) {
+
+                    float data = additionalData.get(dataComponent.getRawID());
+                    nbtCompound.putFloat(String.valueOf(dataComponent.getRawID()), data);
+                }
+            }
+        }
     }
 
     public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components) {
@@ -75,7 +82,7 @@ public class ShellComponentUtil {
                     for (ShellComponent forbiddenComponent : exclusives) {
                         if (components.contains(forbiddenComponent)) {
                             flag = true;
-                            FireSupport.LOGGER.info("Cannot build shell! module {} is incompatible with {}", component.getName().toString(), forbiddenComponent.getName().toString());
+                            FireSupport.LOGGER.info("Cannot build shell! module {} is incompatible with {}", component.getTranslationKey(), forbiddenComponent.getTranslationKey());
                             break;
                         }
                     }
@@ -85,7 +92,7 @@ public class ShellComponentUtil {
                     for (ShellComponent dependency : requiredDependencies) {
                         if (!components.contains(dependency)) {
                             flag = true;
-                            FireSupport.LOGGER.info("Cannot build shell! module {} requires {}", component.getName().toString(), dependency.getName().toString());
+                            FireSupport.LOGGER.info("Cannot build shell! module {} requires {}", component.getTranslationKey(), dependency.getTranslationKey());
                             break;
                         }
                     }
@@ -137,7 +144,10 @@ public class ShellComponentUtil {
         Vector2i secondary = new Vector2i(4967423, 255);
         Vector2i temp;
         for (ShellComponent component : components) {
-            temp = component.getColourWithPriority();
+            if (component.isDualColour()) {
+                return component.getColours();
+            }
+            temp = component.getColours();
             if (temp.y < primary.y) {
                 secondary = primary;
                 primary = temp;
@@ -149,6 +159,13 @@ public class ShellComponentUtil {
             secondary = primary;
         }
         return new Vector2i(primary.x, secondary.x);
+    }
+
+    public static void addComponentsToTooltip(ItemStack stack, List<Text> tooltip) {
+        List<ShellComponent> components = getComponents(stack);
+        for (ShellComponent component : components) {
+            tooltip.add(Text.translatable(component.getTranslationKey()).formatted(Formatting.DARK_GRAY));
+        }
     }
 
     public static List<ShellComponent> getExclusives(ShellComponent component) {

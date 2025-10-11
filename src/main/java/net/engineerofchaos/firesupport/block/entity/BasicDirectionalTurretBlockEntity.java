@@ -1,5 +1,6 @@
 package net.engineerofchaos.firesupport.block.entity;
 
+import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.screen.BasicDirectionalTurretScreenHandler;
@@ -130,13 +131,12 @@ public class BasicDirectionalTurretBlockEntity extends BlockEntity implements Ex
 
         this.setStack(OUTPUT_SLOT, new ItemStack(result.getItem(), getStack(OUTPUT_SLOT).getCount() + result.getCount()));
 
-        BulletEntityOld bulletEntityOld = new BulletEntityOld(world, shell);
-        Vec3d velocity = bulletEntityOld.calcVelocity(0, 180, 0.0F, 40F, 1.0F);
-        bulletEntityOld.setPosition(pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() - 0.1);
-        bulletEntityOld.setVelocity(velocity);
+        BulletEntity bulletEntity = new BulletEntity(world, shell);
+        Vec3d velocity = bulletEntity.getShotVelocity(0, 180, 0.0F, 40F, 1.0F);
+        bulletEntity.setInitialPos(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() - 0.1));
+        bulletEntity.setVelocity(velocity);
 
-        world.spawnEntity(bulletEntityOld);
-        bulletEntityOld.sendBulletVelocity(velocity);
+        world.spawnEntity(bulletEntity);
     }
 
     private boolean hasCraftingFinished() {

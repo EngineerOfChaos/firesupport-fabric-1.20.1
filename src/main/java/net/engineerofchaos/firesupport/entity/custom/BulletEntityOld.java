@@ -57,11 +57,11 @@ public class BulletEntityOld extends ProjectileEntity {
         this.ignoreCameraFrustum = true;
     }
 
-    public void initFuses() {
-        for (FuseShellComponent fuse : fuses) {
-            fuse.initFuse(this);
-        }
-    }
+//    public void initFuses() {
+//        for (FuseShellComponent fuse : fuses) {
+//            fuse.initFuse(this);
+//        }
+//    }
 
     @Override
     protected void initDataTracker() {
@@ -172,12 +172,6 @@ public class BulletEntityOld extends ProjectileEntity {
         super.onCollision(hitResult);
     }
 
-/*    private void setStopRenderTime(Vec3d hitPos) {
-        Vec3d travelVector = hitPos.subtract(this.getPos());
-        this.dataTracker.set(REMOVAL_TRAVEL, (float) (travelVector.length() / this.getVelocity().length()));
-        FireSupport.LOGGER.info("Collision detected at {}", getStopRenderTime());
-    }*/
-
     private Vec3d getClosestPosition(HitResult hitResult) {
         Vec3d normal = this.getVelocity();
         FireSupport.LOGGER.info("Current bullet velocity {}", normal);
@@ -227,14 +221,15 @@ public class BulletEntityOld extends ProjectileEntity {
 
     @Nullable
     private Vec3d tickFuses() {
-        Vec3d location = null;
-        for (FuseShellComponent fuse : fuses) {
-            Vec3d temp = fuse.checkFuseCondition(this, additionalData);
-            if (temp != null) {
-                location = temp;
-            }
-        }
-        return location;
+//        Vec3d location = null;
+//        for (FuseShellComponent fuse : fuses) {
+//            Vec3d temp = fuse.checkFuseCondition(this, additionalData);
+//            if (temp != null) {
+//                location = temp;
+//            }
+//        }
+//        return location;
+        return null;
     }
 
     public void sendBulletVelocity(Vec3d velocity) {
@@ -244,7 +239,7 @@ public class BulletEntityOld extends ProjectileEntity {
         buf.writeInt(this.getId());
 
         for (ServerPlayerEntity player : PlayerLookup.tracking((ServerWorld) this.getWorld(), this.getBlockPos())) {
-            ServerPlayNetworking.send(player, FireSupportNetworkingConstants.BULLET_VELOCITY_PACKET_ID, buf);
+            ServerPlayNetworking.send(player, FireSupportNetworkingConstants.S2C_BULLET_VELOCITY_PACKET_ID, buf);
         }
     }
 
@@ -317,14 +312,6 @@ public class BulletEntityOld extends ProjectileEntity {
             }
         }
     }
-
-    /*    public float getStopRenderTime() {
-        return this.dataTracker.get(REMOVAL_TRAVEL);
-    }
-
-    public boolean shouldRenderThisTick() {
-        return this.dataTracker.get(IMPACT_FLAG);
-    }*/
 
     private double getGravity() {
         return 0.03f;

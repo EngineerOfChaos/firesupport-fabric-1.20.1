@@ -1,6 +1,6 @@
 package net.engineerofchaos.firesupport.shellcomponent;
 
-import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,12 +19,12 @@ public class ProxyFuseShellComponent extends AdditionalDataShellComponent implem
     }
 
     @Override
-    public @Nullable Vec3d checkFuseCondition(BulletEntityOld entity, HashMap<Integer, Float> additionalData) {
+    public @Nullable Vec3d checkFuseCondition(BulletEntity entity, HashMap<Integer, Float> additionalData) {
         return null;
     }
 
     @Override
-    public void initFuse(BulletEntityOld entity) {
+    public void initFuse(BulletEntity entity) {
         entity.proxyMult = getData(entity.additionalData);
     }
 }

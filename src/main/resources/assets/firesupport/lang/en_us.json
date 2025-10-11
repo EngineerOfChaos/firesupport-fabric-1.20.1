@@ -24,5 +24,8 @@
   "shellComponent.firesupport.high_explosive": "High Explosive",
   "shellComponent.firesupport.solid_ap": "Solid",
   "shellComponent.firesupport.solid_sap": "Semi Armour Piercing",
-  "shellComponent.firesupport.ap_core": "Armour Piercing Core"
+  "shellComponent.firesupport.ap_core": "Armour Piercing Core",
+  "shellComponent.firesupport.timed_fuse": "Timed Fuse",
+  "shellComponent.firesupport.proxy_fuse": "Proximity Fuse",
+  "shellComponent.firesupport.sabot": "Discarding Sabot"
 }

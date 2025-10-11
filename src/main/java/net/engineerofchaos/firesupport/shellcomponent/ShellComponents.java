@@ -35,7 +35,7 @@ public class ShellComponents {
     public static final ShellComponent SABOT = register("sabot",
             new ShellComponent(ShellComponentUtil
                     .createMultipliers(2f, 0.2f, 10f, 1f, 0.1f, 0.2f),
-                    1776412, 1));
+                    1776412, 11645361, 0));
 
     public static final ShellComponent PROXY_FUSE = register("proxy_fuse",
             new ProxyFuseShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 0, 255));

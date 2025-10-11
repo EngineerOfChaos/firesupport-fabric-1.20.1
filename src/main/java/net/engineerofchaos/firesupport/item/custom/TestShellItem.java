@@ -1,22 +1,28 @@
 package net.engineerofchaos.firesupport.item.custom;
 
-import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
+import net.engineerofchaos.firesupport.FireSupport;
+import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponent;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
 import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class TestShellItem extends Item {
 
@@ -36,6 +42,7 @@ public class TestShellItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        FireSupport.LOGGER.info("hi");
         ItemStack itemStack = user.getStackInHand(hand);
         world.playSound(
                 null,
@@ -48,23 +55,23 @@ public class TestShellItem extends Item {
                 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F)
         );
         if (!world.isClient) {
-            BulletEntityOld bulletEntityOld = new BulletEntityOld(world, itemStack);
+            BulletEntity bulletEntity = new BulletEntity(world, itemStack);
             Vec3d pos = new Vec3d(user.getX(), user.getEyeY(), user.getZ());
-            Vec3d velocity = bulletEntityOld.calcVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
+            Vec3d velocity = bulletEntity.getShotVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
 
             // summon the bullet one tick ahead
-            //bulletEntity.setPosition(pos.add(velocity.multiply(0.1)));
-            bulletEntityOld.setPosition(pos);
-            bulletEntityOld.setVelocity(velocity);
+            bulletEntity.setPosition(pos.add(velocity.normalize()));
+            //bulletEntity.setPosition(pos);
+            bulletEntity.setVelocity(velocity);
             HashMap<Integer, Float> fuseMap = new HashMap<>();
 
             // this is an optional step to override the default values
             fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 5f);
-            bulletEntityOld.programFuses(fuseMap);
-            bulletEntityOld.initFuses();
+            bulletEntity.programFuses(fuseMap);
+            bulletEntity.initFuses();
 
-            world.spawnEntity(bulletEntityOld);
-            bulletEntityOld.sendBulletVelocity(velocity);
+            world.spawnEntity(bulletEntity);
+            //bulletEntity.sendBulletVelocity(velocity);
         }
 
         user.incrementStat(Stats.USED.getOrCreateStat(this));
@@ -75,7 +82,8 @@ public class TestShellItem extends Item {
         return TypedActionResult.success(itemStack, world.isClient());
     }
 
-
-
-
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        ShellComponentUtil.addComponentsToTooltip(stack, tooltip);
+    }
 }
