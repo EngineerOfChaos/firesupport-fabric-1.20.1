@@ -3,15 +3,14 @@
   "textures": {
     "layer0": "firesupport:item/test_shell_primary",
     "layer1": "firesupport:item/test_shell_secondary",
-    "layer2": "firesupport:item/test_shell_casing",
-    "layer3": "firesupport:item/test_shell_writing"
+    "layer2": "firesupport:item/test_shell_casing"
   },
   "overrides": [
-    {
-      "predicate": {
-        "sabot": 1
-      },
-      "model": "firesupport:item/test_shell_sabot"
-    }
+    {"predicate": {"calibre": 0.02}, "model": "firesupport:item/shell_20_short"},
+    {"predicate": {"calibre": 0.02, "case_length": 0.5}, "model": "firesupport:item/shell_20_long"},
+    {"predicate": {"calibre": 0.03}, "model": "firesupport:item/shell_30_short"},
+    {"predicate": {"calibre": 0.03, "case_length": 0.5}, "model": "firesupport:item/shell_30_long"},
+    {"predicate": {"calibre": 0.04}, "model": "firesupport:item/shell_40_short"},
+    {"predicate": {"calibre": 0.04, "case_length": 0.5}, "model": "firesupport:item/shell_40_long"}
   ]
 }

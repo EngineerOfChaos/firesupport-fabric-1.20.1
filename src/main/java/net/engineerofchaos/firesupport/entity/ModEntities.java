@@ -3,6 +3,7 @@ package net.engineerofchaos.firesupport.entity;
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntityOld;
+import net.engineerofchaos.firesupport.entity.custom.RideableTurretEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -26,6 +27,12 @@ public class ModEntities {
                     .dimensions(EntityDimensions.changing(0.2f, 0.2f))
                     .forceTrackedVelocityUpdates(false)
                     .trackRangeChunks(16)
+                    .build());
+
+    public static final EntityType<RideableTurretEntity> RIDEABLE_TURRET = Registry.register(Registries.ENTITY_TYPE,
+            new Identifier(FireSupport.MOD_ID, "rideable_turret"),
+            FabricEntityTypeBuilder.<RideableTurretEntity>create(SpawnGroup.MISC, RideableTurretEntity::new)
+                    .dimensions(EntityDimensions.fixed(1,1))
                     .build());
 
     public static void registerModEntities() {

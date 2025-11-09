@@ -2,7 +2,7 @@
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
 
-package net.engineerofchaos.firesupport.entity.render;
+package net.engineerofchaos.firesupport.entity.render.model;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;

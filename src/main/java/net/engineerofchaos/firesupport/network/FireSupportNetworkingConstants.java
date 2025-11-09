@@ -9,4 +9,7 @@ public class FireSupportNetworkingConstants {
 
     public static final Identifier C2S_BULLET_VELOCITY_REQUEST_PACKET_ID =
             new Identifier(FireSupport.MOD_ID, "bullet_velocity_request");
+
+    public static final Identifier C2S_MANUAL_TURRET_FIRE_ID =
+            new Identifier(FireSupport.MOD_ID, "manual_turret_fire");
 }

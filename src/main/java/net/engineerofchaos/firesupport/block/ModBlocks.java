@@ -4,6 +4,7 @@ import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.block.custom.BarbedWireBlock;
 import net.engineerofchaos.firesupport.block.custom.BasicDirectionalTurretBlock;
 import net.engineerofchaos.firesupport.block.custom.DamagedGlassBlock;
+import net.engineerofchaos.firesupport.block.custom.TurretRingBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -47,6 +48,9 @@ public class ModBlocks {
 
     public static final Block DIRECTIONAL_TURRET = registerBlock("directional_turret",
             new BasicDirectionalTurretBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+
+    public static final Block TURRET_RING = registerBlock("turret_ring",
+            new TurretRingBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);

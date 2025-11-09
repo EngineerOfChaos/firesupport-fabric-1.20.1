@@ -66,7 +66,7 @@ public class TestShellItem extends Item {
             HashMap<Integer, Float> fuseMap = new HashMap<>();
 
             // this is an optional step to override the default values
-            fuseMap.put(ShellComponent.getRawID(ShellComponents.TIMED_FUSE), 5f);
+            fuseMap.put(ShellComponents.TIMED_FUSE.getRawID(), 5f);
             bulletEntity.programFuses(fuseMap);
             bulletEntity.initFuses();
 
@@ -85,5 +85,10 @@ public class TestShellItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         ShellComponentUtil.addComponentsToTooltip(stack, tooltip);
+    }
+
+    @Override
+    public Text getName() {
+        return super.getName();
     }
 }

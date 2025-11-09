@@ -18,7 +18,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(ModBlocks.DAMAGED_GLASS)
                 .add(ModBlocks.BARBED_WIRE)
-                .add(ModBlocks.ARMOUR);
+                .add(ModBlocks.ARMOUR)
+                .add(ModBlocks.TURRET_RING);
 
         getOrCreateTagBuilder(BlockTags.FENCES)
                 .add(ModBlocks.ARMOUR_FENCE);

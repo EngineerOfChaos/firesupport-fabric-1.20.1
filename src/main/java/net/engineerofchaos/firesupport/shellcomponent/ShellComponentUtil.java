@@ -33,11 +33,7 @@ public class ShellComponentUtil {
         return list;
     }
 
-    public static ItemStack newShellWithComponents(ItemStack stack, List<ShellComponent> components) {
-        return newShellWithComponents(stack, components, null);
-    }
-
-    public static ItemStack newShellWithComponents(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+    public static ItemStack addComponentsToStack(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
         if (!components.isEmpty()) {
             // get item nbt
             NbtCompound nbtCompound = stack.getOrCreateNbt();
@@ -72,8 +68,18 @@ public class ShellComponentUtil {
     }
 
     public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components) {
+        return buildShellItem(stack, components, null);
+    }
+
+    public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+        if (verifyComponentList(components)) {
+            return addComponentsToStack(stack, components, additionalData);
+        }
+        return stack;
+    }
+
+    public static boolean verifyComponentList(List<ShellComponent> components) {
         if (!components.isEmpty()) {
-            boolean flag = false;
             for (ShellComponent component : components) {
                 List<ShellComponent> exclusives = getExclusives(component);
                 List<ShellComponent> requiredDependencies = getDependencies(component);
@@ -81,9 +87,8 @@ public class ShellComponentUtil {
                 if (exclusives != null) {
                     for (ShellComponent forbiddenComponent : exclusives) {
                         if (components.contains(forbiddenComponent)) {
-                            flag = true;
                             FireSupport.LOGGER.info("Cannot build shell! module {} is incompatible with {}", component.getTranslationKey(), forbiddenComponent.getTranslationKey());
-                            break;
+                            return false;
                         }
                     }
                 }
@@ -91,20 +96,14 @@ public class ShellComponentUtil {
                 if (requiredDependencies != null) {
                     for (ShellComponent dependency : requiredDependencies) {
                         if (!components.contains(dependency)) {
-                            flag = true;
                             FireSupport.LOGGER.info("Cannot build shell! module {} requires {}", component.getTranslationKey(), dependency.getTranslationKey());
-                            break;
+                            return false;
                         }
                     }
                 }
             }
-
-            if (!flag) {
-                return newShellWithComponents(stack, components);
-            }
-            FireSupport.LOGGER.info("Shell build failed!");
         }
-        return stack;
+        return true;
     }
 
     public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list, HashMap<Integer, Float> additionalData) {

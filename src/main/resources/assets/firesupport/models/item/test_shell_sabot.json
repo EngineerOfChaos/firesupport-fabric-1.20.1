@@ -3,7 +3,6 @@
   "textures": {
     "layer0": "firesupport:item/test_shell_sabot_collar",
     "layer1": "firesupport:item/test_shell_sabot_core",
-    "layer2": "firesupport:item/test_shell_casing",
-    "layer3": "firesupport:item/test_shell_writing"
+    "layer2": "firesupport:item/test_shell_casing"
   }
 }
