@@ -7,25 +7,31 @@ import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.damage.ModDamageTypes;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
+import net.engineerofchaos.firesupport.network.C2SFireCommandPacket;
+import net.engineerofchaos.firesupport.network.C2STurretSetupRequestPacket;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
 import net.engineerofchaos.firesupport.screen.ModScreenHandlers;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
+import net.engineerofchaos.firesupport.shell.CaseLength;
+import net.engineerofchaos.firesupport.shell.ShellComponents;
+import net.engineerofchaos.firesupport.turret.Arrangements;
+import net.engineerofchaos.firesupport.turret.Autoloaders;
 import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FireSupport implements ModInitializer {
 	public static final String MOD_ID = "firesupport";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	// TODO move these to configs
+	public static final float POWDER_ENERGY_DENSITY = 0.2f;
+	public static final float BULLET_DRAG_COEFFICIENT = 1f;
 
 	@Override
 	public void onInitialize() {
@@ -39,6 +45,9 @@ public class FireSupport implements ModInitializer {
 		ShellComponents.registerShellComponents();
 		ShellComponents.registerExclusivities();
 		ShellComponents.registerDependencies();
+
+		Autoloaders.registerAutoloaders();
+		Arrangements.registerArrangements();
 
 		ModItemGroups.registerItemGroups();
 
@@ -64,11 +73,15 @@ public class FireSupport implements ModInitializer {
 						if (targetBullet != null) {
 							Vec3d velocity = targetBullet.getVelocity();
 							Vec3d initialPos = targetBullet.getLaunchPos();
+							int cal = targetBullet.calibre;
+							CaseLength caseLength = targetBullet.caseLength;
 
 							PacketByteBuf responseBuf = PacketByteBufs.create();
 							responseBuf.writeVector3f(velocity.toVector3f());
 							responseBuf.writeVector3f(initialPos.toVector3f());
 							responseBuf.writeInt(targetBulletID);
+							responseBuf.writeInt(cal);
+							responseBuf.writeInt(caseLength.ordinal());
 
 							responseSender.sendPacket(FireSupportNetworkingConstants.S2C_BULLET_VELOCITY_PACKET_ID, responseBuf);
 						} else {
@@ -76,6 +89,13 @@ public class FireSupport implements ModInitializer {
 						}
 					});
 
-				}));
+				})
+		);
+
+		ServerPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.C2S_MANUAL_TURRET_FIRE_ID,
+				(C2SFireCommandPacket::handle));
+
+		ServerPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.C2S_TURRET_SETUP_REQUEST_PACKET_ID,
+				(C2STurretSetupRequestPacket::handle));
 	}
 }

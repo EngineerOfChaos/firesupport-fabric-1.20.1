@@ -1,8 +1,8 @@
 package net.engineerofchaos.firesupport.item;
 
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
-import net.engineerofchaos.firesupport.util.ShellUtil;
+import net.engineerofchaos.firesupport.shell.ShellComponentUtil;
+import net.engineerofchaos.firesupport.shell.ShellComponents;
+import net.engineerofchaos.firesupport.shell.ShellUtil;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.util.Identifier;
 
@@ -30,7 +30,7 @@ public class ModModelPredicateProviders {
                     if (livingEntity == null) {
                         return 0.0F;
                     }
-                    return (float) ShellUtil.getCaseLength(itemStack) / 2;
+                    return (float) ShellUtil.getCaseLength(itemStack).ordinal() / 2;
                 });
     }
 }

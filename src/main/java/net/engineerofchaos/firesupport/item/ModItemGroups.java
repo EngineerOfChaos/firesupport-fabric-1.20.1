@@ -2,9 +2,12 @@ package net.engineerofchaos.firesupport.item;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.block.ModBlocks;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
-import net.engineerofchaos.firesupport.util.ShellUtil;
+import net.engineerofchaos.firesupport.shell.CaseLength;
+import net.engineerofchaos.firesupport.shell.ShellComponents;
+import net.engineerofchaos.firesupport.shell.ShellUtil;
+import net.engineerofchaos.firesupport.turret.Arrangements;
+import net.engineerofchaos.firesupport.turret.Autoloaders;
+import net.engineerofchaos.firesupport.turret.TurretBuilderUtil;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -28,25 +31,30 @@ public class ModItemGroups {
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.SOLID_AP, ShellComponents.HIGH_EXPLOSIVE),
-                                null, 30, 2));
+                                null, 30, CaseLength.LONG));
+
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE),
-                                null, 40, 0));
+                                null, 40, CaseLength.SHORT));
 
-                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
-                                Arrays.asList(ShellComponents.SOLID_SAP, ShellComponents.HIGH_EXPLOSIVE)));
-                        //this one should fail!
-                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
-                                Arrays.asList(ShellComponents.AP_CORE, ShellComponents.HIGH_EXPLOSIVE)));
-                        HashMap<Integer, Float> testData = new HashMap<>();
-                        testData.put(ShellComponents.TIMED_FUSE.getRawID(), 10F);
-                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
-                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE), testData));
-                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
-                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.PROXY_FUSE)));
-                        entries.add(ShellComponentUtil.buildShellItem(new ItemStack(ModItems.TEST_SHELL),
-                                Arrays.asList(ShellComponents.SABOT)));
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.SOLID_SAP, ShellComponents.HIGH_EXPLOSIVE),
+                                null, 30, CaseLength.LONG));
 
+                        HashMap<String, Float> testData = new HashMap<>();
+                        testData.put(ShellComponents.TIMED_FUSE.getID(), 10F);
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE),
+                                testData, 30, CaseLength.LONG));
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.PROXY_FUSE),
+                                null, 30, CaseLength.LONG));
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.SABOT),
+                                null, 30, CaseLength.LONG));
 
                         entries.add(ModItems.CASING);
 
@@ -67,6 +75,12 @@ public class ModItemGroups {
                         entries.add(ModBlocks.DIRECTIONAL_TURRET);
                         entries.add(ModBlocks.TURRET_RING);
 
+                        entries.add(TurretBuilderUtil.buildTurretItem(ModItems.TURRET_ITEM, Arrangements.SINGLE_1X1_TEST,
+                                Autoloaders.AC_20M_SHORT_RECOIL));
+                        entries.add(TurretBuilderUtil.buildTurretItem(ModItems.TURRET_ITEM, Arrangements.DOUBLE_2X1_TEST,
+                                Autoloaders.AC_20M_SHORT_RECOIL));
+                        entries.add(TurretBuilderUtil.buildTurretItem(ModItems.TURRET_ITEM, Arrangements.QUAD_2X2_RING,
+                                Autoloaders.AC_20M_SHORT_RECOIL));
                     }).build());
 
     public static void registerItemGroups() {

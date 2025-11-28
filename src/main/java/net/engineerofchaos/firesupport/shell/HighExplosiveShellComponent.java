@@ -1,4 +1,4 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class HighExplosiveShellComponent extends ShellComponent implements PayloadShellComponent {
-    public HighExplosiveShellComponent(List<Float> multipliers, int colour, int colourPriority) {
+    public HighExplosiveShellComponent(Multipliers multipliers, int colour, int colourPriority) {
         super(multipliers, colour, colourPriority);
     }
 

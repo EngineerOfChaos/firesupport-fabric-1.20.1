@@ -4,14 +4,11 @@ import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.entity.damage.ModDamageTypes;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
-import net.engineerofchaos.firesupport.shellcomponent.*;
+import net.engineerofchaos.firesupport.shell.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -20,7 +17,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
@@ -32,17 +29,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class BulletEntity extends Entity implements Ownable {
 
     private List<ShellComponent> components;
     private List<FuseShellComponent> fuses;
     private List<PayloadShellComponent> payloads;
-    public final HashMap<Integer, Float> additionalData = new HashMap<>();
+    public final HashMap<String, Float> additionalData = new HashMap<>();
+    public CaseLength caseLength;
+    public int calibre;
     public boolean detonationFlag = false;
-    private Entity owner = null;
+    private Entity owner;
+    private UUID ownerUUID;
     public float proxyMult;
-    private Vec3d lastPos;
     private Vec3d launchPos = Vec3d.ZERO;
 
     public BulletEntity(EntityType<?> type, World world) {
@@ -51,6 +51,8 @@ public class BulletEntity extends Entity implements Ownable {
         fuses = new ArrayList<>();
         payloads = new ArrayList<>();
         this.ignoreCameraFrustum = true;
+        this.caseLength = CaseLength.SHORT;
+        this.calibre = 20;
     }
 
     public BulletEntity(World world, ItemStack shell) {
@@ -59,17 +61,15 @@ public class BulletEntity extends Entity implements Ownable {
         fuses = ShellComponentUtil.getFuses(components);
         payloads = ShellComponentUtil.getPayloads(components);
         this.ignoreCameraFrustum = true;
+        this.caseLength = ShellUtil.getCaseLength(shell);
+        this.calibre = ShellUtil.getCalibre(shell);
     }
 
     @Override
     public void tick() {
         this.attemptTickInVoid();
-//        if (!this.firstUpdate) {
-//            this.launchPos = this.getPos();
-//        }
         this.firstUpdate = false;
 
-        setLastPos(this.getPos());
 
         if (detonationFlag) {
             executePayloadEffects(getPos());
@@ -135,6 +135,9 @@ public class BulletEntity extends Entity implements Ownable {
                 // move entity as normal
                 this.setPosition(this.getPos().add(this.getVelocity()));
                 this.addVelocity(this.getGravityAccel());
+                Vec3d drag = this.getVelocity().normalize().multiply(-1 * calculateDrag());
+                FireSupport.LOGGER.info("Speed: %s".formatted(getVelocity().length()));
+                this.addVelocity(drag);
             }
 
         }
@@ -142,6 +145,19 @@ public class BulletEntity extends Entity implements Ownable {
 
 
         //this.getWorld().isChunkLoaded()
+    }
+
+    private float calculateDrag() {
+        float dragForce = (float) (getVelocity().length() * getVelocity().length() *
+                ((Math.PI * this.calibre * this.calibre)/4f) *
+                FireSupport.BULLET_DRAG_COEFFICIENT * getMultipliers().drag()
+        );
+        float acceleration = dragForce / this.caseLength.getBulletVolume(this.calibre);
+        return acceleration * 0.05f;
+    }
+
+    public Multipliers getMultipliers() {
+        return ShellUtil.sumAllMultipliers(this.components, this.additionalData);
     }
 
     private boolean canHit(Entity entity) {
@@ -165,11 +181,18 @@ public class BulletEntity extends Entity implements Ownable {
         components = ShellComponentUtil.getComponents(nbt, additionalData);
         fuses = ShellComponentUtil.getFuses(components);
         payloads = ShellComponentUtil.getPayloads(components);
+        if (nbt.containsUuid("owner")) {
+            this.ownerUUID = nbt.getUuid("owner");
+            this.owner = null;
+        }
     }
 
     @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
         ShellComponentUtil.addComponentsToNBTCompound(nbt, components, additionalData);
+        if (this.ownerUUID != null) {
+            nbt.putUuid("owner", this.ownerUUID);
+        }
     }
 
     @Override
@@ -279,9 +302,9 @@ public class BulletEntity extends Entity implements Ownable {
         return location;
     }
 
-    public void programFuses(HashMap<Integer, Float> fuseMap) {
+    public void programFuses(HashMap<String, Float> fuseMap) {
         for (FuseShellComponent fuse : fuses) {
-            int fuseID = ShellComponent.getRawID((ShellComponent) fuse);
+            String fuseID = ShellComponent.getID((ShellComponent) fuse);
             if (fuseMap.containsKey(fuseID)) {
                 float value = fuseMap.get(fuseID);
                 ((AdditionalDataShellComponent) fuse).setData(value, additionalData);
@@ -307,16 +330,14 @@ public class BulletEntity extends Entity implements Ownable {
 
     public void setInitialPos(Vec3d pos) {
         this.setPosition(pos);
-        this.setLastPos(pos);
         this.launchPos = pos;
     }
 
-    public void setLastPos(Vec3d pos) {
-        this.lastPos = pos;
-    }
-
-    public Vec3d getLastPos() {
-        return this.lastPos;
+    public void setInitialPosWithOffset(Vec3d pos, float tickDelta) {
+        this.launchPos = pos;
+        Vec3d startPos = pos.add(getVelocity().multiply(tickDelta));
+        //TODO verify nothing is between pos and startPos
+        this.setPosition(startPos);
     }
 
     public void setLaunchPos(Vec3d pos){
@@ -332,8 +353,21 @@ public class BulletEntity extends Entity implements Ownable {
 
     @Override
     public @Nullable Entity getOwner() {
-        return this.owner;
-        // TODO: put this in the spawn packet that sends velocity!
+        if (this.owner != null && !this.owner.isRemoved()) {
+            return this.owner;
+        } else if (this.ownerUUID != null && this.getWorld() instanceof ServerWorld) {
+            this.owner = ((ServerWorld)this.getWorld()).getEntity(this.ownerUUID);
+            return this.owner;
+        } else {
+            return null;
+        }
+    }
+
+    public void setOwner(Entity entity) {
+        if (entity != null) {
+            this.owner = entity;
+            this.ownerUUID = entity.getUuid();
+        }
     }
 
 
@@ -392,7 +426,7 @@ public class BulletEntity extends Entity implements Ownable {
     @Override
     public void onSpawnPacket(EntitySpawnS2CPacket packet) {
         super.onSpawnPacket(packet);
-        FireSupport.LOGGER.info("spawn packet received by client");
+        //FireSupport.LOGGER.info("spawn packet received by client");
 
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(this.getId());
@@ -404,5 +438,13 @@ public class BulletEntity extends Entity implements Ownable {
     @Override
     public Packet<ClientPlayPacketListener> createSpawnPacket() {
         return super.createSpawnPacket();
+    }
+
+    public void setCalibre(int calibre) {
+        this.calibre = calibre;
+    }
+
+    public void setCaseLength(CaseLength caseLength) {
+        this.caseLength = caseLength;
     }
 }

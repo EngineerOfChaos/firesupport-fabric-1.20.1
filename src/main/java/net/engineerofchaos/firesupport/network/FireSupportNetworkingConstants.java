@@ -12,4 +12,13 @@ public class FireSupportNetworkingConstants {
 
     public static final Identifier C2S_MANUAL_TURRET_FIRE_ID =
             new Identifier(FireSupport.MOD_ID, "manual_turret_fire");
+
+    public static final Identifier S2C_TURRET_TARGET_ANGLE =
+            new Identifier(FireSupport.MOD_ID, "turret_target_angle");
+
+    public static final Identifier C2S_TURRET_SETUP_REQUEST_PACKET_ID =
+            new Identifier(FireSupport.MOD_ID, "turret_setup_request");
+
+    public static final Identifier S2C_TURRET_SETUP_PACKET_ID =
+            new Identifier(FireSupport.MOD_ID, "turret_setup");
 }

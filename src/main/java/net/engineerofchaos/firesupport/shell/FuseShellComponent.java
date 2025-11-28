@@ -1,4 +1,4 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.minecraft.util.math.Vec3d;
@@ -13,7 +13,7 @@ public interface FuseShellComponent {
      * @return Null if no detonation, Vec3d of location if it should.
      */
     @Nullable
-    Vec3d checkFuseCondition(BulletEntity entity, HashMap<Integer, Float> additionalData);
+    Vec3d checkFuseCondition(BulletEntity entity, HashMap<String, Float> additionalData);
 
     /**
      * called on entity creation, use for the fuse to tell the entity things, such as what size to be

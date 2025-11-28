@@ -1,11 +1,10 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,29 +15,26 @@ public class ShellComponents {
     public static final HashMap<ShellComponent, List<ShellComponent>> DEPENDENCY_MAP = new HashMap<>();
 
     public static final ShellComponent HIGH_EXPLOSIVE = register("high_explosive",
-            new HighExplosiveShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 13874199, 2));
+            new HighExplosiveShellComponent(new Multipliers(), 13874199, 2));
 
     public static final ShellComponent SOLID_AP = register("solid_ap",
-            new ShellComponent(Arrays.asList(1.1F, 1.5F, 1.5F, 1F, 0.5F, 1F), 1447447, 1));
+            new ShellComponent(new Multipliers(1, 1, 5, 1, 0.3f), 1447447, 1));
 
     public static final ShellComponent SOLID_SAP = register("solid_sap",
-            new ShellComponent(Arrays.asList(1.1F, 1.3F, 1.3F, 1F, 0.7F, 1F), 6225920, 1));
+            new ShellComponent(new Multipliers(1, 1, 3, 1, 0.7f), 6225920, 1));
 
     public static final ShellComponent AP_CORE = register("ap_core",
-            new ShellComponent(ShellComponentUtil
-                    .createMultipliers(1f, 0.5f, 2f, 1f, 0.5f, 0.8f),
-                    7303023, 2));
+            new ShellComponent(new Multipliers(1, 1, 10, 1, 0.1f), 7303023, 2));
 
     public static final ShellComponent TIMED_FUSE = register("timed_fuse",
-            new TimedFuseShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 0, 255));
+            new TimedFuseShellComponent(new Multipliers(), 0, 255));
 
     public static final ShellComponent SABOT = register("sabot",
-            new ShellComponent(ShellComponentUtil
-                    .createMultipliers(2f, 0.2f, 10f, 1f, 0.1f, 0.2f),
-                    1776412, 14211288, 0));
+            new ShellComponent(new Multipliers(1, 0.2f, 50, 1, 0f),
+                    3092271, 14211288, 0));
 
     public static final ShellComponent PROXY_FUSE = register("proxy_fuse",
-            new ProxyFuseShellComponent(Arrays.asList(1F, 1F, 1F, 1F, 1F, 1F), 0, 255));
+            new ProxyFuseShellComponent(new Multipliers(), 0, 255));
 
     private static ShellComponent register(String name, ShellComponent component) {
         return Registry.register(ModRegistries.SHELL_COMPONENT, new Identifier(FireSupport.MOD_ID, name), component);

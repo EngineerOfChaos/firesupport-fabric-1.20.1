@@ -9,9 +9,13 @@ import net.engineerofchaos.firesupport.entity.render.model.TestTurretEntityModel
 import net.engineerofchaos.firesupport.item.ModItems;
 import net.engineerofchaos.firesupport.item.ModModelPredicateProviders;
 import net.engineerofchaos.firesupport.item.custom.TestShellItem;
-import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
+import net.engineerofchaos.firesupport.network.*;
 import net.engineerofchaos.firesupport.screen.BasicDirectionalTurretScreen;
 import net.engineerofchaos.firesupport.screen.ModScreenHandlers;
+import net.engineerofchaos.firesupport.shell.CaseLength;
+import net.engineerofchaos.firesupport.shell.ShellUtil;
+import net.engineerofchaos.firesupport.turret.client.AutoloaderModels;
+import net.engineerofchaos.firesupport.turret.client.model.autoloader.AC20MShortRecoilModel;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -23,13 +27,16 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
@@ -48,7 +55,8 @@ public class FireSupportClient implements ClientModInitializer {
 
         ClientPreAttackCallback.EVENT.register(((client, player, clickCount) -> {
             if (player.getRootVehicle() instanceof RideableTurretEntity turret) {
-                player.sendMessage(Text.literal("pew"));
+                //player.sendMessage(Text.literal("pew"));
+                NetworkUtil.send(new C2SFireCommandPacket());
             }
             return false;
         }));
@@ -60,8 +68,11 @@ public class FireSupportClient implements ClientModInitializer {
 
         ModModelPredicateProviders.registerModelPredicateProviders();
 
+        AutoloaderModels.initAutoloaderModels();
+
         //EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.TEST_TURRET, TestTurretEntityModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.AC_20M_SHORT_RECOIL, () -> AC20MShortRecoilModel.getTexturedModelData());
 
         EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityCustomRenderer::new);
         EntityRendererRegistry.register(ModEntities.BULLET, BulletEntityRenderer::new);
@@ -72,6 +83,8 @@ public class FireSupportClient implements ClientModInitializer {
             Vector3f velocity = buf.readVector3f();
             Vector3f launchPos = buf.readVector3f();
             int entityID = buf.readInt();
+            int cal = buf.readInt();
+            int caseLengthOrdinal = buf.readInt();
 
             client.execute( () -> {
                 if (client.world != null) {
@@ -80,12 +93,21 @@ public class FireSupportClient implements ClientModInitializer {
                         targetBullet.setVelocityClient(velocity.x, velocity.y, velocity.z);
                         targetBullet.setVelocity(velocity.x, velocity.y, velocity.z);
                         targetBullet.setLaunchPos(new Vec3d(launchPos.x, launchPos.y, launchPos.z));
+                        targetBullet.setCalibre(cal);
+                        targetBullet.setCaseLength(CaseLength.getCaseLength(caseLengthOrdinal));
                     }
                 }
             } );
 
 
         }));
+
+        ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.S2C_TURRET_TARGET_ANGLE,
+                (S2CTurretTargetAnglePacket::handle));
+        ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.S2C_TURRET_SETUP_PACKET_ID,
+                (S2CTurretSetupPacket::handle));
+
+
 
         HandledScreens.register(ModScreenHandlers.BASIC_DIRECTIONAL_TURRET_SCREEN_HANDLER, BasicDirectionalTurretScreen::new);
     }

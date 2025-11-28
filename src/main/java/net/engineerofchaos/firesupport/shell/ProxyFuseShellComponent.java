@@ -1,15 +1,14 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 
-public class ProxyFuseShellComponent extends AdditionalDataShellComponent implements FuseShellComponent{
+public class ProxyFuseShellComponent extends AdditionalDataShellComponent implements FuseShellComponent {
 
-    public ProxyFuseShellComponent(List<Float> multipliers, int colour, int colourPriority) {
+    public ProxyFuseShellComponent(Multipliers multipliers, int colour, int colourPriority) {
         super(multipliers, colour, colourPriority);
     }
 
@@ -19,7 +18,7 @@ public class ProxyFuseShellComponent extends AdditionalDataShellComponent implem
     }
 
     @Override
-    public @Nullable Vec3d checkFuseCondition(BulletEntity entity, HashMap<Integer, Float> additionalData) {
+    public @Nullable Vec3d checkFuseCondition(BulletEntity entity, HashMap<String, Float> additionalData) {
         return null;
     }
 

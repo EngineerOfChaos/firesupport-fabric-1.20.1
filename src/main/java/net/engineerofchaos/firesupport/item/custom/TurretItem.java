@@ -3,9 +3,13 @@ package net.engineerofchaos.firesupport.item.custom;
 import net.engineerofchaos.firesupport.block.ModBlocks;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.entity.custom.RideableTurretEntity;
+import net.engineerofchaos.firesupport.turret.Arrangement;
+import net.engineerofchaos.firesupport.turret.Autoloader;
+import net.engineerofchaos.firesupport.turret.TurretBuilderUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,7 +39,10 @@ public class TurretItem extends Item {
     }
 
     private void spawnTurret(World world, BlockPos pos, ItemStack stack) {
-        RideableTurretEntity entity = new RideableTurretEntity(pos, world);
+        NbtCompound nbt  = stack.getOrCreateNbt();
+        Autoloader autoloader = TurretBuilderUtil.getAutoloader(nbt);
+        Arrangement arrangement  = TurretBuilderUtil.getArrangement(nbt);
+        RideableTurretEntity entity = new RideableTurretEntity(pos, world, arrangement, autoloader);
         world.spawnEntity(entity);
     }
 }

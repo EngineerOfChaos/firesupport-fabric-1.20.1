@@ -8,9 +8,15 @@
   "overrides": [
     {"predicate": {"calibre": 0.02}, "model": "firesupport:item/shell_20_short"},
     {"predicate": {"calibre": 0.02, "case_length": 0.5}, "model": "firesupport:item/shell_20_long"},
+    {"predicate": {"calibre": 0.02, "case_length": 0.5, "sabot":  1}, "model": "firesupport:item/shell_sabot_20_long"},
+
     {"predicate": {"calibre": 0.03}, "model": "firesupport:item/shell_30_short"},
     {"predicate": {"calibre": 0.03, "case_length": 0.5}, "model": "firesupport:item/shell_30_long"},
+    {"predicate": {"calibre": 0.03, "case_length": 0.5, "sabot":  1}, "model": "firesupport:item/shell_sabot_30_long"},
+
+
     {"predicate": {"calibre": 0.04}, "model": "firesupport:item/shell_40_short"},
-    {"predicate": {"calibre": 0.04, "case_length": 0.5}, "model": "firesupport:item/shell_40_long"}
+    {"predicate": {"calibre": 0.04, "case_length": 0.5}, "model": "firesupport:item/shell_40_long"},
+    {"predicate": {"calibre": 0.04, "case_length": 0.5, "sabot":  1}, "model": "firesupport:item/shell_sabot_40_long"}
   ]
 }

@@ -56,6 +56,11 @@ public class ModModelProvider extends FabricModelProvider {
                         itemModelGenerator);
                 for (String altModel : Arrays.asList("sabot", "heat")) {
                     // generate alternate model file
+                    registerThreeLayerShellModel(fsID("item/shell_%s_%d_%s".formatted(altModel, cal, caseLengthString)),
+                            fsID("item/shell_%s_primary_%s".formatted(altModel, caseLengthString)),
+                            fsID("item/shell_%s_secondary_%s".formatted(altModel ,caseLengthString)),
+                            fsID("item/casing_%d_%s".formatted(cal, caseLengthString)),
+                            itemModelGenerator);
                 }
             }
         }

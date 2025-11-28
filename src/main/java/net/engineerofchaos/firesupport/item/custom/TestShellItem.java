@@ -2,9 +2,9 @@ package net.engineerofchaos.firesupport.item.custom;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponent;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponentUtil;
-import net.engineerofchaos.firesupport.shellcomponent.ShellComponents;
+import net.engineerofchaos.firesupport.shell.ShellComponentUtil;
+import net.engineerofchaos.firesupport.shell.ShellComponents;
+import net.engineerofchaos.firesupport.shell.ShellUtil;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,7 +13,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
@@ -57,18 +56,20 @@ public class TestShellItem extends Item {
         if (!world.isClient) {
             BulletEntity bulletEntity = new BulletEntity(world, itemStack);
             Vec3d pos = new Vec3d(user.getX(), user.getEyeY(), user.getZ());
-            Vec3d velocity = bulletEntity.getShotVelocity(user.getPitch(), user.getYaw(), 0.0F, 5F, 1.0F);
+            Vec3d velocity = bulletEntity.getShotVelocity(user.getPitch(), user.getYaw(), 0.0F, ShellUtil.calculateLaunchSpeed(itemStack), 1.0F);
 
             // summon the bullet one tick ahead
             bulletEntity.setPosition(pos.add(velocity.normalize()));
             //bulletEntity.setPosition(pos);
             bulletEntity.setVelocity(velocity);
-            HashMap<Integer, Float> fuseMap = new HashMap<>();
+            HashMap<String, Float> fuseMap = new HashMap<>();
 
             // this is an optional step to override the default values
-            fuseMap.put(ShellComponents.TIMED_FUSE.getRawID(), 5f);
+            fuseMap.put(ShellComponents.TIMED_FUSE.getID(), 5f);
             bulletEntity.programFuses(fuseMap);
             bulletEntity.initFuses();
+
+            bulletEntity.setOwner(user);
 
             world.spawnEntity(bulletEntity);
             //bulletEntity.sendBulletVelocity(velocity);

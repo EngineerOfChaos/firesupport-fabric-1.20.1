@@ -3,7 +3,7 @@ package net.engineerofchaos.firesupport.entity.custom;
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
-import net.engineerofchaos.firesupport.shellcomponent.*;
+import net.engineerofchaos.firesupport.shell.*;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -37,7 +37,7 @@ public class BulletEntityOld extends ProjectileEntity {
     private final List<ShellComponent> components;
     private final List<FuseShellComponent> fuses;
     private final List<PayloadShellComponent> payloads;
-    public final HashMap<Integer, Float> additionalData = new HashMap<>();
+    public final HashMap<String, Float> additionalData = new HashMap<>();
     private float armourPierce = 0;
     public float proxyMult = 1.0f;
 
@@ -303,9 +303,9 @@ public class BulletEntityOld extends ProjectileEntity {
         return (float) - Math.toDegrees(Math.atan(this.getVelocity().getY() / horizontal));
     }
 
-    public void programFuses(HashMap<Integer, Float> fuseMap) {
+    public void programFuses(HashMap<String, Float> fuseMap) {
         for (FuseShellComponent fuse : fuses) {
-            int fuseID = ShellComponent.getRawID((ShellComponent) fuse);
+            String fuseID = ShellComponent.getID((ShellComponent) fuse);
             if (fuseMap.containsKey(fuseID)) {
                 float value = fuseMap.get(fuseID);
                 ((AdditionalDataShellComponent) fuse).setData(value, additionalData);

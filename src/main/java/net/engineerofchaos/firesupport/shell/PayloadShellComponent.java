@@ -1,4 +1,4 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;

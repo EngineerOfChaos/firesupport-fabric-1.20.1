@@ -1,4 +1,4 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -7,20 +7,20 @@ import java.util.List;
 
 public abstract class AdditionalDataShellComponent extends ShellComponent {
 
-    public AdditionalDataShellComponent(List<Float> multipliers, int colour, int colourPriority) {
+    public AdditionalDataShellComponent(Multipliers multipliers, int colour, int colourPriority) {
         super(multipliers, colour, colourPriority);
     }
 
-    public float getData(@NotNull HashMap<Integer, Float> additionalData) {
-        int componentID = this.getRawID();
+    public float getData(@NotNull HashMap<String, Float> additionalData) {
+        String componentID = this.getID();
         if (additionalData.containsKey(componentID)) {
             return additionalData.get(componentID);
         }
         return getDefaultData();
     }
 
-    public void setData(float data, @NotNull HashMap<Integer, Float> additionalData) {
-        int componentID = this.getRawID();
+    public void setData(float data, @NotNull HashMap<String, Float> additionalData) {
+        String componentID = this.getID();
         additionalData.put(componentID, data);
     }
 

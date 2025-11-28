@@ -26,7 +26,7 @@ public class BulletEntityRenderer<T extends BulletEntity> extends EntityRenderer
     @Override
     public void render(T entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, 15728640);
-        if (entity.getVelocity() != Vec3d.ZERO) {
+        if (entity.getVelocity().lengthSquared() > 0.5) {
 
             // change these to be defined by entity data later!
             float width = 0.03F;

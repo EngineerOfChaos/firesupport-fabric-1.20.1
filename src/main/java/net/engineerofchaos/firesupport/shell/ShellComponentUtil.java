@@ -1,4 +1,4 @@
-package net.engineerofchaos.firesupport.shellcomponent;
+package net.engineerofchaos.firesupport.shell;
 
 import com.google.common.collect.Lists;
 import net.engineerofchaos.firesupport.FireSupport;
@@ -23,17 +23,17 @@ public class ShellComponentUtil {
         return getComponents(stack.getNbt(), new HashMap<>());
     }
 
-    public static List<ShellComponent> getComponents(ItemStack stack, HashMap<Integer, Float> additionalData) {
+    public static List<ShellComponent> getComponents(ItemStack stack, HashMap<String, Float> additionalData) {
         return getComponents(stack.getNbt(), additionalData);
     }
 
-    public static List<ShellComponent> getComponents(@Nullable NbtCompound nbt, HashMap<Integer, Float> additionalData) {
+    public static List<ShellComponent> getComponents(@Nullable NbtCompound nbt, HashMap<String, Float> additionalData) {
         List<ShellComponent> list = Lists.newArrayList();
         getComponents(nbt, list, additionalData);
         return list;
     }
 
-    public static ItemStack addComponentsToStack(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+    public static ItemStack addComponentsToStack(ItemStack stack, List<ShellComponent> components, HashMap<String, Float> additionalData) {
         if (!components.isEmpty()) {
             // get item nbt
             NbtCompound nbtCompound = stack.getOrCreateNbt();
@@ -45,23 +45,26 @@ public class ShellComponentUtil {
         return stack;
     }
 
-    public static void addComponentsToNBTCompound(NbtCompound nbtCompound, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+    public static void addComponentsToNBTCompound(NbtCompound nbtCompound, List<ShellComponent> components, HashMap<String, Float> additionalData) {
         // make array of component ids
-        int[] componentIDsArray = new int[components.size()];
+        StringBuilder componentIDsArray = new StringBuilder();
         // add ids to array
-        for (int i = 0; i < components.size(); i++) {
-            componentIDsArray[i] = ShellComponent.getRawID(components.get(i));
+        for (ShellComponent component : components) {
+            componentIDsArray.append(ShellComponent.getID(component));
+            if (component != components.get(components.size() - 1)) {
+                componentIDsArray.append(',');
+            }
         }
         // add array to item nbt
-        nbtCompound.putIntArray("ShellComponents", componentIDsArray);
+        nbtCompound.putString("ShellComponents", componentIDsArray.toString());
 
         // processing for additional data components: if additional data is provided add to nbt
         if (additionalData != null) {
             for (ShellComponent dataComponent : components) {
-                if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getRawID())) {
+                if (dataComponent instanceof AdditionalDataShellComponent && additionalData.containsKey(dataComponent.getID())) {
 
-                    float data = additionalData.get(dataComponent.getRawID());
-                    nbtCompound.putFloat(String.valueOf(dataComponent.getRawID()), data);
+                    float data = additionalData.get(dataComponent.getID());
+                    nbtCompound.putFloat(String.valueOf(dataComponent.getID()), data);
                 }
             }
         }
@@ -71,7 +74,7 @@ public class ShellComponentUtil {
         return buildShellItem(stack, components, null);
     }
 
-    public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components, HashMap<Integer, Float> additionalData) {
+    public static ItemStack buildShellItem(ItemStack stack, List<ShellComponent> components, HashMap<String, Float> additionalData) {
         if (verifyComponentList(components)) {
             return addComponentsToStack(stack, components, additionalData);
         }
@@ -106,14 +109,13 @@ public class ShellComponentUtil {
         return true;
     }
 
-    public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list, HashMap<Integer, Float> additionalData) {
-        if (nbt != null && nbt.contains("ShellComponents", NbtElement.INT_ARRAY_TYPE)) {
-            int[] nbtList = nbt.getIntArray("ShellComponents");
+    public static void getComponents(@Nullable NbtCompound nbt, List<ShellComponent> list, HashMap<String, Float> additionalData) {
+        if (nbt != null && nbt.contains("ShellComponents", NbtElement.STRING_TYPE)) {
+            String shellComponentsString = nbt.getString("ShellComponents");
+            List<String> stringList = Arrays.asList(shellComponentsString.split(","));
 
-            for (int i = 0; i < nbtList.length; i++) {
-
-                int nextComponentID = nbtList[i];
-                ShellComponent component = ShellComponent.byRawID(nextComponentID);
+            for (String nextComponentID : stringList) {
+                ShellComponent component = ShellComponent.byID(nextComponentID);
                 if (component != null) {
 
                     // if the component should have extra data, retrieve it from the nbt
@@ -133,8 +135,8 @@ public class ShellComponentUtil {
         }
     }
 
-    private static float retrieveData(@NotNull NbtCompound nbt, int nextComponentID) {
-        return nbt.getFloat(String.valueOf(nextComponentID));
+    private static float retrieveData(@NotNull NbtCompound nbt, String nextComponentID) {
+        return nbt.getFloat(nextComponentID);
     }
 
     public static Vector2i getColours(ItemStack stack) {
@@ -144,9 +146,9 @@ public class ShellComponentUtil {
         Vector2i temp;
         for (ShellComponent component : components) {
             if (component.isDualColour()) {
-                return component.getColours();
+                return component.getColours(stack);
             }
-            temp = component.getColours();
+            temp = component.getColours(stack);
             if (temp.y < primary.y) {
                 secondary = primary;
                 primary = temp;
@@ -174,11 +176,6 @@ public class ShellComponentUtil {
     // component needs this list of things in order to work
     public static List<ShellComponent> getDependencies(ShellComponent component) {
         return ShellComponents.DEPENDENCY_MAP.get(component);
-    }
-
-    public static List<Float> createMultipliers(float speed, float damage, float ap,
-                                           float inaccuracy, float payload, float knockback) {
-        return Arrays.asList(speed, damage, ap, inaccuracy, payload, knockback);
     }
 
     /**
