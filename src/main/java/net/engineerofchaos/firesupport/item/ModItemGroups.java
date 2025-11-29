@@ -31,30 +31,45 @@ public class ModItemGroups {
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.SOLID_AP, ShellComponents.HIGH_EXPLOSIVE),
-                                null, 30, CaseLength.LONG));
+                                null, 30, CaseLength.LONG, 0));
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE),
-                                null, 40, CaseLength.SHORT));
+                                null, 40, CaseLength.SHORT, 1.5f));
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.HIGH_EXPLOSIVE),
+                                null, 40, CaseLength.SHORT, 0f));
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.SOLID_SAP, ShellComponents.HIGH_EXPLOSIVE),
-                                null, 30, CaseLength.LONG));
+                                null, 30, CaseLength.LONG, 0));
 
                         HashMap<String, Float> testData = new HashMap<>();
                         testData.put(ShellComponents.TIMED_FUSE.getID(), 10F);
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.TIMED_FUSE),
-                                testData, 30, CaseLength.LONG));
+                                testData, 40, CaseLength.LONG, 0));
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE, ShellComponents.PROXY_FUSE),
-                                null, 30, CaseLength.LONG));
+                                null, 40, CaseLength.LONG, 0));
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.SABOT),
-                                null, 30, CaseLength.LONG));
+                                null, 30, CaseLength.LONG, 0));
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.SOLID_AP),
+                                null, 8, CaseLength.SHORT, 0));
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.SOLID_AP),
+                                null, 6, CaseLength.LONG, 0));
+
+                        entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
+                                Arrays.asList(ShellComponents.SABOT),
+                                null, 120, CaseLength.LONG, 0));
 
                         entries.add(ModItems.CASING);
 

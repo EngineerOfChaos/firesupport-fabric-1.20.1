@@ -12,7 +12,7 @@ import java.util.List;
 public class ShellUtil {
 
     public static ItemStack buildShellItem(Item baseItem, List<ShellComponent> components, HashMap<String,
-            Float> componentData, int calibre, CaseLength caseLength) {
+            Float> componentData, int calibre, CaseLength caseLength, float caseInsetCals) {
         ItemStack stack = new ItemStack(baseItem);
         if (!ShellComponentUtil.verifyComponentList(components)) {
             return stack;
@@ -21,6 +21,7 @@ public class ShellUtil {
         ShellComponentUtil.addComponentsToNBTCompound(nbtCompound, components, componentData);
         nbtCompound.putInt("calibre", calibre);
         nbtCompound.putInt("caseLength", caseLength.ordinal());
+        nbtCompound.putFloat("caseInset", caseInsetCals);
 
         return stack;
     }
@@ -28,6 +29,11 @@ public class ShellUtil {
     public static int getCalibre(ItemStack itemStack) {
         NbtCompound nbtCompound = itemStack.getNbt();
         return nbtCompound != null ? nbtCompound.getInt("calibre") : 0;
+    }
+
+    public static int getCaseInset(ItemStack itemStack) {
+        NbtCompound nbtCompound = itemStack.getNbt();
+        return nbtCompound != null ? nbtCompound.getInt("caseInset") : 0;
     }
 
     public static CaseLength getCaseLength(ItemStack itemStack) {
@@ -63,7 +69,7 @@ public class ShellUtil {
      */
     public static float calculateLaunchSpeed(ItemStack stack) {
         Multipliers totalMultipliers = sumAllMultipliers(stack);
-        float caseVolume = getCaseLength(stack).getCasingVolume(getCalibre(stack)) - 0; // Put inset here when implemented
+        float caseVolume = getCaseLength(stack).getCasingVolume(getCalibre(stack), getCaseInset(stack)) - 0; // Put inset here when implemented
         float launchEnergy = caseVolume * FireSupport.POWDER_ENERGY_DENSITY;
         float shellVolume = getShellVolume(stack) * totalMultipliers.volume();
         return MathHelper.sqrt((2 * launchEnergy)/shellVolume);
@@ -71,6 +77,6 @@ public class ShellUtil {
 
     private static float getShellVolume(ItemStack stack) {
         CaseLength caseLength = getCaseLength(stack);
-        return caseLength.getBulletVolume(getCalibre(stack));
+        return caseLength.getBulletVolume(getCalibre(stack), getCaseInset(stack));
     }
 }

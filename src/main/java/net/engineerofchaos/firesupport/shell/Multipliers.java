@@ -1,5 +1,7 @@
 package net.engineerofchaos.firesupport.shell;
 
+import net.minecraft.util.math.MathHelper;
+
 public record Multipliers(float volume, float drag, float ap, float inaccuracy, float payload) {
 
     public Multipliers() {
@@ -35,5 +37,25 @@ public record Multipliers(float volume, float drag, float ap, float inaccuracy, 
             }
         }
         return this;
+    }
+
+    public int[] toScaledIntArray() {
+        return new int[]{
+                MathHelper.floor(this.volume * 1000),
+                MathHelper.floor(this.drag * 1000),
+                MathHelper.floor(this.ap * 1000),
+                MathHelper.floor(this.inaccuracy * 1000),
+                MathHelper.floor(this.payload * 1000),
+        };
+    }
+
+    public static Multipliers fromScaledIntArray(int[] array) {
+        return new Multipliers(
+                (float) array[0] / 1000,
+                (float) array[1] / 1000,
+                (float) array[2] / 1000,
+                (float) array[3] / 1000,
+                (float) array[4] / 1000
+        );
     }
 }

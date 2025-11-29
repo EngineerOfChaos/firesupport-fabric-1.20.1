@@ -146,7 +146,7 @@ public class RideableTurretEntity extends Entity {
                 }
                 ItemStack itemStack = ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                         Arrays.asList(ShellComponents.SOLID_AP, ShellComponents.HIGH_EXPLOSIVE),
-                        null, 20, CaseLength.MED);
+                        null, 20, CaseLength.MED, 0);
 
                 BulletEntity bulletEntity = new BulletEntity(this.getWorld(), itemStack);
 

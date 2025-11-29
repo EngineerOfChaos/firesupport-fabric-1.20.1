@@ -30,8 +30,8 @@ public class FireSupport implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	// TODO move these to configs
-	public static final float POWDER_ENERGY_DENSITY = 0.2f;
-	public static final float BULLET_DRAG_COEFFICIENT = 1f;
+	public static final float POWDER_ENERGY_DENSITY = 40f;
+	public static final float BULLET_DRAG_COEFFICIENT = 0.5f;
 
 	@Override
 	public void onInitialize() {
@@ -75,6 +75,8 @@ public class FireSupport implements ModInitializer {
 							Vec3d initialPos = targetBullet.getLaunchPos();
 							int cal = targetBullet.calibre;
 							CaseLength caseLength = targetBullet.caseLength;
+							float caseInset = targetBullet.caseInset;
+							int[] multipliers = targetBullet.getMultipliers().toScaledIntArray();
 
 							PacketByteBuf responseBuf = PacketByteBufs.create();
 							responseBuf.writeVector3f(velocity.toVector3f());
@@ -82,6 +84,8 @@ public class FireSupport implements ModInitializer {
 							responseBuf.writeInt(targetBulletID);
 							responseBuf.writeInt(cal);
 							responseBuf.writeInt(caseLength.ordinal());
+							responseBuf.writeFloat(caseInset);
+							responseBuf.writeIntArray(multipliers);
 
 							responseSender.sendPacket(FireSupportNetworkingConstants.S2C_BULLET_VELOCITY_PACKET_ID, responseBuf);
 						} else {

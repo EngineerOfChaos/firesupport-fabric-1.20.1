@@ -2,6 +2,7 @@ package net.engineerofchaos.firesupport.item.custom;
 
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
+import net.engineerofchaos.firesupport.shell.CaseLength;
 import net.engineerofchaos.firesupport.shell.ShellComponentUtil;
 import net.engineerofchaos.firesupport.shell.ShellComponents;
 import net.engineerofchaos.firesupport.shell.ShellUtil;
@@ -15,6 +16,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +88,14 @@ public class TestShellItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         ShellComponentUtil.addComponentsToTooltip(stack, tooltip);
+        int cal = ShellUtil.getCalibre(stack);
+        float caseInset = ShellUtil.getCaseInset(stack);
+        tooltip.add(Text.literal("Case volume: %smm2".formatted(
+                MathHelper.floor(ShellUtil.getCaseLength(stack).getCasingVolume(cal, caseInset))
+        )));
+        tooltip.add(Text.literal("Bullet volume: %smm2".formatted(
+                MathHelper.floor(ShellUtil.getCaseLength(stack).getBulletVolume(cal, caseInset))
+        )));
     }
 
     @Override

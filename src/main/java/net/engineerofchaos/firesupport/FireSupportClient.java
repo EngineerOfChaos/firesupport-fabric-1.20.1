@@ -13,6 +13,7 @@ import net.engineerofchaos.firesupport.network.*;
 import net.engineerofchaos.firesupport.screen.BasicDirectionalTurretScreen;
 import net.engineerofchaos.firesupport.screen.ModScreenHandlers;
 import net.engineerofchaos.firesupport.shell.CaseLength;
+import net.engineerofchaos.firesupport.shell.Multipliers;
 import net.engineerofchaos.firesupport.shell.ShellUtil;
 import net.engineerofchaos.firesupport.turret.client.AutoloaderModels;
 import net.engineerofchaos.firesupport.turret.client.model.autoloader.AC20MShortRecoilModel;
@@ -85,6 +86,8 @@ public class FireSupportClient implements ClientModInitializer {
             int entityID = buf.readInt();
             int cal = buf.readInt();
             int caseLengthOrdinal = buf.readInt();
+            float caseInset = buf.readFloat();
+            int[] scaledMultipliersArray = buf.readIntArray();
 
             client.execute( () -> {
                 if (client.world != null) {
@@ -95,6 +98,8 @@ public class FireSupportClient implements ClientModInitializer {
                         targetBullet.setLaunchPos(new Vec3d(launchPos.x, launchPos.y, launchPos.z));
                         targetBullet.setCalibre(cal);
                         targetBullet.setCaseLength(CaseLength.getCaseLength(caseLengthOrdinal));
+                        targetBullet.setCaseInset(caseInset);
+                        targetBullet.setMultipliers(Multipliers.fromScaledIntArray(scaledMultipliersArray));
                     }
                 }
             } );

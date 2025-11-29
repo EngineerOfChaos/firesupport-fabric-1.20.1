@@ -1,7 +1,7 @@
 package net.engineerofchaos.firesupport.shell;
 
 public enum CaseLength {
-    SHORT(2.5f, 1, 2),
+    SHORT(2, 1, 1),
     MED(5, 2, 4),
     LONG(10, 2, 4);
 
@@ -15,14 +15,14 @@ public enum CaseLength {
         this.bulletLengthCals = bulletLengthCals;
     }
 
-    public float getCasingVolume(float cal) {
+    public float getCasingVolume(float cal, float caseInset) {
         float calArea = (float) ((Math.PI * cal * cal)/4f);
-        return caseLengthCals * cal * calArea * areaMultiplier;
+        return (caseLengthCals - caseInset) * cal * calArea * areaMultiplier;
     }
 
-    public float getBulletVolume(float cal) {
+    public float getBulletVolume(float cal, float caseInset) {
         float calArea = (float) ((Math.PI * cal * cal)/4f);
-        return calArea * bulletLengthCals;
+        return calArea * (bulletLengthCals + caseInset) * cal;
     }
 
     public static CaseLength getCaseLength(int ordinal) {

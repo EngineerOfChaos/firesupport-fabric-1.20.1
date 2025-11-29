@@ -36,8 +36,10 @@ public class BulletEntity extends Entity implements Ownable {
     private List<ShellComponent> components;
     private List<FuseShellComponent> fuses;
     private List<PayloadShellComponent> payloads;
+    private Multipliers multipliers;
     public final HashMap<String, Float> additionalData = new HashMap<>();
     public CaseLength caseLength;
+    public float caseInset;
     public int calibre;
     public boolean detonationFlag = false;
     private Entity owner;
@@ -53,6 +55,7 @@ public class BulletEntity extends Entity implements Ownable {
         this.ignoreCameraFrustum = true;
         this.caseLength = CaseLength.SHORT;
         this.calibre = 20;
+        this.caseInset = 0;
     }
 
     public BulletEntity(World world, ItemStack shell) {
@@ -63,6 +66,7 @@ public class BulletEntity extends Entity implements Ownable {
         this.ignoreCameraFrustum = true;
         this.caseLength = ShellUtil.getCaseLength(shell);
         this.calibre = ShellUtil.getCalibre(shell);
+        this.caseInset = ShellUtil.getCaseInset(shell);
     }
 
     @Override
@@ -152,12 +156,15 @@ public class BulletEntity extends Entity implements Ownable {
                 ((Math.PI * this.calibre * this.calibre)/4f) *
                 FireSupport.BULLET_DRAG_COEFFICIENT * getMultipliers().drag()
         );
-        float acceleration = dragForce / this.caseLength.getBulletVolume(this.calibre);
+        float acceleration = dragForce / this.caseLength.getBulletVolume(this.calibre, this.caseInset);
         return acceleration * 0.05f;
     }
 
     public Multipliers getMultipliers() {
-        return ShellUtil.sumAllMultipliers(this.components, this.additionalData);
+        if (this.multipliers == null) {
+            this.multipliers = ShellUtil.sumAllMultipliers(this.components, this.additionalData);
+        }
+        return this.multipliers;
     }
 
     private boolean canHit(Entity entity) {
@@ -243,7 +250,8 @@ public class BulletEntity extends Entity implements Ownable {
     }
 
     public Vec3d getGravityAccel() {
-        return new Vec3d(0, -0.03, 0);
+        return new Vec3d(0, -0.025, 0); // this is 10m/s2
+        //return new Vec3d(0, -0.03, 0);
     }
 
     private Vec3d getClosestPosition(HitResult hitResult) {
@@ -446,5 +454,13 @@ public class BulletEntity extends Entity implements Ownable {
 
     public void setCaseLength(CaseLength caseLength) {
         this.caseLength = caseLength;
+    }
+
+    public void setCaseInset(float caseInset) {
+        this.caseInset = caseInset;
+    }
+
+    public void setMultipliers(Multipliers multipliers) {
+        this.multipliers = multipliers;
     }
 }
