@@ -35,7 +35,7 @@ public class ModItemGroups {
 
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE),
-                                null, 40, CaseLength.SHORT, 1.5f));
+                                null, 40, CaseLength.SHORT, 1.8f));
                         entries.add(ShellUtil.buildShellItem(ModItems.TEST_SHELL,
                                 Arrays.asList(ShellComponents.HIGH_EXPLOSIVE),
                                 null, 40, CaseLength.SHORT, 0f));

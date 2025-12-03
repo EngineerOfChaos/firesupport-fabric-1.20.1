@@ -1,5 +1,6 @@
 package net.engineerofchaos.firesupport.network;
 
+import net.engineerofchaos.firesupport.entity.custom.AbstractTurretEntity;
 import net.engineerofchaos.firesupport.entity.custom.RideableTurretEntity;
 import net.engineerofchaos.firesupport.turret.Arrangement;
 import net.engineerofchaos.firesupport.turret.Autoloader;
@@ -25,17 +26,17 @@ public class C2STurretSetupRequestPacket implements FSPacket{
 
     @Override
     public void write(PacketByteBuf buf) {
-        buf.writeInt(targetEntity.getId());
+        buf.writeVarInt(targetEntity.getId());
     }
 
     public static void handle(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler,
                               PacketByteBuf buf, PacketSender responseSender) {
-        int turretID = buf.readInt();
+        int turretID = buf.readVarInt();
         server.execute(() -> {
             Entity turret = player.getWorld().getEntityById(turretID);
             if (turret != null) {
-                Arrangement arrangement = ((RideableTurretEntity) turret).getArrangement();
-                Autoloader autoloader = ((RideableTurretEntity) turret).getAutoloader();
+                Arrangement arrangement = ((AbstractTurretEntity) turret).getArrangement();
+                Autoloader autoloader = ((AbstractTurretEntity) turret).getAutoloader();
 
                 NetworkUtil.send(new S2CTurretSetupPacket(arrangement, autoloader, turretID, responseSender));
             }

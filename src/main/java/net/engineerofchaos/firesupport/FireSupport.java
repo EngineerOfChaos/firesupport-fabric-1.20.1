@@ -7,6 +7,7 @@ import net.engineerofchaos.firesupport.entity.custom.BulletEntity;
 import net.engineerofchaos.firesupport.entity.damage.ModDamageTypes;
 import net.engineerofchaos.firesupport.item.ModItemGroups;
 import net.engineerofchaos.firesupport.item.ModItems;
+import net.engineerofchaos.firesupport.network.C2SBulletVelocityRequestPacket;
 import net.engineerofchaos.firesupport.network.C2SFireCommandPacket;
 import net.engineerofchaos.firesupport.network.C2STurretSetupRequestPacket;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
@@ -62,39 +63,7 @@ public class FireSupport implements ModInitializer {
 		ModScreenHandlers.registerScreenHandlers();
 
 		ServerPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.C2S_BULLET_VELOCITY_REQUEST_PACKET_ID,
-				((server, player, handler, buf, responseSender) -> {
-
-					int targetBulletID = buf.readInt();
-
-					server.execute(() -> {
-						// do stuff here
-
-						BulletEntity targetBullet = (BulletEntity) player.getWorld().getEntityById(targetBulletID);
-						if (targetBullet != null) {
-							Vec3d velocity = targetBullet.getVelocity();
-							Vec3d initialPos = targetBullet.getLaunchPos();
-							int cal = targetBullet.calibre;
-							CaseLength caseLength = targetBullet.caseLength;
-							float caseInset = targetBullet.caseInset;
-							int[] multipliers = targetBullet.getMultipliers().toScaledIntArray();
-
-							PacketByteBuf responseBuf = PacketByteBufs.create();
-							responseBuf.writeVector3f(velocity.toVector3f());
-							responseBuf.writeVector3f(initialPos.toVector3f());
-							responseBuf.writeInt(targetBulletID);
-							responseBuf.writeInt(cal);
-							responseBuf.writeInt(caseLength.ordinal());
-							responseBuf.writeFloat(caseInset);
-							responseBuf.writeIntArray(multipliers);
-
-							responseSender.sendPacket(FireSupportNetworkingConstants.S2C_BULLET_VELOCITY_PACKET_ID, responseBuf);
-						} else {
-							FireSupport.LOGGER.info("Server: No target bullet found matching ID!");
-						}
-					});
-
-				})
-		);
+				(C2SBulletVelocityRequestPacket::handle));
 
 		ServerPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.C2S_MANUAL_TURRET_FIRE_ID,
 				(C2SFireCommandPacket::handle));

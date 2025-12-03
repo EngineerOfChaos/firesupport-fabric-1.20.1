@@ -4,6 +4,8 @@ import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
 
 public class Arrangements {
@@ -46,6 +48,12 @@ public class Arrangements {
         public Pivot eject(Ejection ejectDirection) {
             this.shellEject = ejectDirection;
             return this;
+        }
+
+        public Vec3d getRelativeLocation(float pitch, float yaw) {
+            Vec3d location = new Vec3d(pivotPoint);
+            Vec3d rawOffset = new Vec3d(offset);
+            return location.add(rawOffset.rotateX((float) Math.toRadians(pitch)).rotateY((float) - Math.toRadians(yaw)));
         }
     }
 }

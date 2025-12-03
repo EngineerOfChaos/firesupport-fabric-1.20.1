@@ -43,7 +43,7 @@ public class TestShellItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        FireSupport.LOGGER.info("hi");
+        //FireSupport.LOGGER.info("hi");
         ItemStack itemStack = user.getStackInHand(hand);
         world.playSound(
                 null,
@@ -90,12 +90,12 @@ public class TestShellItem extends Item {
         ShellComponentUtil.addComponentsToTooltip(stack, tooltip);
         int cal = ShellUtil.getCalibre(stack);
         float caseInset = ShellUtil.getCaseInset(stack);
-        tooltip.add(Text.literal("Case volume: %smm2".formatted(
-                MathHelper.floor(ShellUtil.getCaseLength(stack).getCasingVolume(cal, caseInset))
-        )));
-        tooltip.add(Text.literal("Bullet volume: %smm2".formatted(
-                MathHelper.floor(ShellUtil.getCaseLength(stack).getBulletVolume(cal, caseInset))
-        )));
+        tooltip.add(
+                ShellUtil.getFormattedVolume("Case", ShellUtil.getCaseLength(stack).getCasingVolume(cal, caseInset))
+        );
+        tooltip.add(
+                ShellUtil.getFormattedVolume("Bullet", ShellUtil.getCaseLength(stack).getBulletVolume(cal, caseInset))
+        );
     }
 
     @Override

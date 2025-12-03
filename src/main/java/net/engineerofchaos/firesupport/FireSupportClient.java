@@ -73,40 +73,14 @@ public class FireSupportClient implements ClientModInitializer {
 
         //EntityModelLayerRegistry.registerModelLayer(ModModelLayers.BULLET, BulletModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.TEST_TURRET, TestTurretEntityModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.AC_20M_SHORT_RECOIL, () -> AC20MShortRecoilModel.getTexturedModelData());
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.AC_20M_SHORT_RECOIL, AC20MShortRecoilModel::getTexturedModelData);
 
         EntityRendererRegistry.register(ModEntities.BULLET_THROWN, BulletEntityCustomRenderer::new);
         EntityRendererRegistry.register(ModEntities.BULLET, BulletEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.RIDEABLE_TURRET, TestTurretEntityRenderer::new);
 
         ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.S2C_BULLET_VELOCITY_PACKET_ID,
-                ((client, handler, buf, responseSender) -> {
-            Vector3f velocity = buf.readVector3f();
-            Vector3f launchPos = buf.readVector3f();
-            int entityID = buf.readInt();
-            int cal = buf.readInt();
-            int caseLengthOrdinal = buf.readInt();
-            float caseInset = buf.readFloat();
-            int[] scaledMultipliersArray = buf.readIntArray();
-
-            client.execute( () -> {
-                if (client.world != null) {
-                    BulletEntity targetBullet = (BulletEntity) client.world.getEntityById(entityID);
-                    if (targetBullet != null){
-                        targetBullet.setVelocityClient(velocity.x, velocity.y, velocity.z);
-                        targetBullet.setVelocity(velocity.x, velocity.y, velocity.z);
-                        targetBullet.setLaunchPos(new Vec3d(launchPos.x, launchPos.y, launchPos.z));
-                        targetBullet.setCalibre(cal);
-                        targetBullet.setCaseLength(CaseLength.getCaseLength(caseLengthOrdinal));
-                        targetBullet.setCaseInset(caseInset);
-                        targetBullet.setMultipliers(Multipliers.fromScaledIntArray(scaledMultipliersArray));
-                    }
-                }
-            } );
-
-
-        }));
-
+                (S2CBulletVelocityPacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.S2C_TURRET_TARGET_ANGLE,
                 (S2CTurretTargetAnglePacket::handle));
         ClientPlayNetworking.registerGlobalReceiver(FireSupportNetworkingConstants.S2C_TURRET_SETUP_PACKET_ID,

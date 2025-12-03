@@ -1,9 +1,8 @@
 package net.engineerofchaos.firesupport.network;
 
 import net.engineerofchaos.firesupport.FireSupport;
-import net.engineerofchaos.firesupport.entity.custom.RideableTurretEntity;
+import net.engineerofchaos.firesupport.entity.custom.AbstractTurretEntity;
 import net.engineerofchaos.firesupport.turret.Arrangement;
-import net.engineerofchaos.firesupport.turret.Arrangements;
 import net.engineerofchaos.firesupport.turret.Autoloader;
 import net.engineerofchaos.firesupport.util.ModRegistries;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -43,21 +42,21 @@ public class S2CTurretSetupPacket implements FSPacket{
         } else {
             FireSupport.LOGGER.info("invalid autoloader ID!");
         }
-        buf.writeInt(turretID);
+        buf.writeVarInt(turretID);
     }
 
     public static void handle(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf,
                        PacketSender responseSender) {
         String arrangementID = buf.readString();
         String autoloaderID = buf.readString();
-        int turretID = buf.readInt();
+        int turretID = buf.readVarInt();
 
         client.execute(() -> {
             Arrangement arrangement = ModRegistries.ARRANGEMENT.get(new Identifier(arrangementID));
             Autoloader autoloader = ModRegistries.AUTOLOADER.get(new Identifier(autoloaderID));
 
             if (client.world != null) {
-                RideableTurretEntity targetTurret = (RideableTurretEntity) client.world.getEntityById(turretID);
+                AbstractTurretEntity targetTurret = (AbstractTurretEntity) client.world.getEntityById(turretID);
                 if (targetTurret != null) {
                     targetTurret.clientResetSetup(arrangement, autoloader);
                 }

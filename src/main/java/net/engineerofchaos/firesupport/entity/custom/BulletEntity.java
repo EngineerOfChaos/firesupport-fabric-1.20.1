@@ -3,7 +3,9 @@ package net.engineerofchaos.firesupport.entity.custom;
 import net.engineerofchaos.firesupport.FireSupport;
 import net.engineerofchaos.firesupport.entity.ModEntities;
 import net.engineerofchaos.firesupport.entity.damage.ModDamageTypes;
+import net.engineerofchaos.firesupport.network.C2SBulletVelocityRequestPacket;
 import net.engineerofchaos.firesupport.network.FireSupportNetworkingConstants;
+import net.engineerofchaos.firesupport.network.NetworkUtil;
 import net.engineerofchaos.firesupport.shell.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -140,7 +142,7 @@ public class BulletEntity extends Entity implements Ownable {
                 this.setPosition(this.getPos().add(this.getVelocity()));
                 this.addVelocity(this.getGravityAccel());
                 Vec3d drag = this.getVelocity().normalize().multiply(-1 * calculateDrag());
-                FireSupport.LOGGER.info("Speed: %s".formatted(getVelocity().length()));
+                //FireSupport.LOGGER.info("Speed: %s".formatted(getVelocity().length()));
                 this.addVelocity(drag);
             }
 
@@ -250,7 +252,7 @@ public class BulletEntity extends Entity implements Ownable {
     }
 
     public Vec3d getGravityAccel() {
-        return new Vec3d(0, -0.025, 0); // this is 10m/s2
+        return new Vec3d(0, -0.025, 0); // this is 10 m/s2
         //return new Vec3d(0, -0.03, 0);
     }
 
@@ -436,10 +438,12 @@ public class BulletEntity extends Entity implements Ownable {
         super.onSpawnPacket(packet);
         //FireSupport.LOGGER.info("spawn packet received by client");
 
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(this.getId());
+        NetworkUtil.send(new C2SBulletVelocityRequestPacket(this));
 
-        ClientPlayNetworking.send(FireSupportNetworkingConstants.C2S_BULLET_VELOCITY_REQUEST_PACKET_ID, buf);
+//        PacketByteBuf buf = PacketByteBufs.create();
+//        buf.writeInt(this.getId());
+//
+//        ClientPlayNetworking.send(FireSupportNetworkingConstants.C2S_BULLET_VELOCITY_REQUEST_PACKET_ID, buf);
         // INFO: This packet shows up when the entity is loaded, not just spawned the first time!
     }
 

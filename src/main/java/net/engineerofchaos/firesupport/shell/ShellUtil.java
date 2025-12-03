@@ -4,6 +4,8 @@ import net.engineerofchaos.firesupport.FireSupport;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.HashMap;
@@ -31,9 +33,9 @@ public class ShellUtil {
         return nbtCompound != null ? nbtCompound.getInt("calibre") : 0;
     }
 
-    public static int getCaseInset(ItemStack itemStack) {
+    public static float getCaseInset(ItemStack itemStack) {
         NbtCompound nbtCompound = itemStack.getNbt();
-        return nbtCompound != null ? nbtCompound.getInt("caseInset") : 0;
+        return nbtCompound != null ? nbtCompound.getFloat("caseInset") : 0;
     }
 
     public static CaseLength getCaseLength(ItemStack itemStack) {
@@ -78,5 +80,19 @@ public class ShellUtil {
     private static float getShellVolume(ItemStack stack) {
         CaseLength caseLength = getCaseLength(stack);
         return caseLength.getBulletVolume(getCalibre(stack), getCaseInset(stack));
+    }
+
+    public static MutableText getFormattedVolume(String label, float rawVolume) {
+        float scaledVolume = rawVolume/1000;
+        if (scaledVolume < 1) {
+            return Text.literal("%s volume: %.2f cm3".formatted(label, scaledVolume));
+        }
+        if (scaledVolume < 10) {
+            return Text.literal("%s volume: %.1f cm3".formatted(label, scaledVolume));
+        }
+        if (scaledVolume < 1000) {
+            return Text.literal("%s volume: %s cm3".formatted(label, MathHelper.floor(scaledVolume)));
+        }
+        return Text.literal("%s volume: %sk cm3".formatted(label, MathHelper.floor(scaledVolume/1000)));
     }
 }
